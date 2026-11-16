@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>DoorFlow Night Ops v3.0</title>
+  <title>Frog Kayıt</title>
 
-  <!-- iOS Safari PWA / Tam Ekran Ayarları -->
+  <!-- iOS Safari PWA & Ana Ekran İkonu Ayarları -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="DoorFlow" />
+  <meta name="apple-mobile-web-app-title" content="Frog Kayıt" />
   <meta name="theme-color" content="#09090b" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -46,17 +45,30 @@
       box-sizing: border-box;
     }
 
-    body {
+    /* Hızlı çift dokunuşta iOS Safari zoom ve sayfa yukarı/aşağı kaymasını kesin engelle */
+    html, body, button, a, [role="button"] {
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    html, body {
+      overscroll-behavior-y: none;
       background-color: #09090b;
       color: #f4f4f5;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(92px + env(safe-area-inset-bottom));
-      overscroll-behavior-y: none;
     }
 
     input, select, textarea {
       font-size: 16px !important;
+      -webkit-user-select: text;
+      user-select: text;
+      touch-action: manipulation;
     }
 
     .no-scrollbar::-webkit-scrollbar {
@@ -68,10 +80,14 @@
     }
 
     .tap-btn {
-      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease, border-color 0.15s ease;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.12s ease, border-color 0.12s ease;
     }
     .tap-btn:active {
-      transform: scale(0.96);
+      transform: scale(0.95);
     }
 
     input[type="time"]::-webkit-calendar-picker-indicator {
@@ -80,37 +96,38 @@
     }
   </style>
 </head>
-<body class="antialiased selection:bg-amber-500/30 selection:text-amber-200">
+<body class="antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
 
   <!-- ========================================================= -->
-  <!-- SABİT ÜST PANEL: BAŞLIK & CANLI BAY / BAYAN SAYAÇLARI     -->
+  <!-- SABİT ÜST PANEL: SIFIR BUTON, YALNIZCA BAŞLIK & CANLI SAAT -->
   <!-- ========================================================= -->
   <header class="sticky top-0 z-30 bg-oled/95 backdrop-blur-xl border-b border-zinc-800/90 px-3.5 pt-2.5 pb-3 shadow-2xl">
     <div class="max-w-[480px] mx-auto space-y-2.5">
       
-      <!-- Üst Bar: Marka + Ana Ekrana Ekle + Genel Toplam Rozeti -->
+      <!-- Üst Bar: Yalnızca Frog Kayıt Logosu/Başlığı ve Aktif Vardiya / Saat Rozeti (HİÇBİR BUTON YOK) -->
       <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <h1 class="text-base font-black tracking-tight text-white">DoorFlow</h1>
-          <span class="text-[11px] font-extrabold bg-amber-400/15 text-amber-400 border border-amber-400/30 px-2 py-0.5 rounded-full">v3.0</span>
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-sm shadow-emerald-500/20 shrink-0">
+            <svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7.5 4A2.5 2.5 0 0 0 5 6.5c0 .7.29 1.33.76 1.78A7.98 7.98 0 0 0 4 13c0 3.87 3.58 7 8 7s8-3.13 8-7c0-1.8-.67-3.45-1.76-4.72.47-.45.76-1.08.76-1.78a2.5 2.5 0 0 0-4.88-.75 8.15 8.15 0 0 0-4.24 0A2.5 2.5 0 0 0 7.5 4Zm0 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm9 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM8.5 13.5c.85 1.15 2.1 1.75 3.5 1.75s2.65-.6 3.5-1.75a.75.75 0 1 1 1.2.9C15.55 15.95 13.9 16.75 12 16.75s-3.55-.8-4.7-2.35a.75.75 0 1 1 1.2-.9Z"/>
+            </svg>
+          </div>
+          <div class="truncate">
+            <h1 class="text-base font-black tracking-tight text-white leading-none">Frog Kayıt</h1>
+            <span id="header-date-label" class="text-[10px] font-semibold text-zinc-400 block mt-1">Kapı & Face Control Operasyonu</span>
+          </div>
         </div>
 
-        <div class="flex items-center gap-1.5">
-          <div class="flex items-center gap-1.5 bg-surface border border-zinc-700/80 px-2.5 py-1.5 rounded-xl">
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400">GENEL TOPLAM</span>
-            <span id="grand-total-display" class="text-sm font-black text-amber-400 tabular-nums">0</span>
-          </div>
-          <button type="button" onclick="openPwaModal()" class="text-[11px] font-bold text-zinc-200 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 px-2.5 py-1.5 rounded-xl flex items-center gap-1 tap-btn">
-            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            Ana Ekrana Ekle
-          </button>
+        <div class="flex items-center gap-1.5 shrink-0 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1.5 rounded-xl">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[10px] font-bold text-emerald-400">Aktif Vardiya</span>
+          <span id="header-live-clock" class="text-[11px] font-black text-white tabular-nums pl-1 border-l border-emerald-500/25">--:--</span>
         </div>
       </div>
 
       <!-- BAY & BAYAN Canlı Sayaç Kartları -->
       <div class="grid grid-cols-2 gap-2.5">
-        <!-- BAY KARTI (Indigo Vurgu) -->
+        <!-- BAY KARTI (Sadece -1 ve +1) -->
         <div class="bg-panel border border-indigo-500/35 rounded-2xl p-2.5 flex flex-col justify-between shadow-lg shadow-indigo-950/20">
           <div class="flex items-center justify-between">
             <span class="text-xs font-black uppercase tracking-wider text-indigo-400">BAY</span>
@@ -119,13 +136,13 @@
           <div class="flex items-center justify-between gap-2 mt-1.5">
             <div id="total-male-display" class="text-3xl font-black text-white tabular-nums tracking-tight">0</div>
             <div class="flex items-center gap-1.5">
-              <button type="button" onclick="adjustQuickMale(-1)" aria-label="Bay Azalt" class="w-11 h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-black text-base flex items-center justify-center tap-btn">-1</button>
-              <button type="button" onclick="adjustQuickMale(1)" aria-label="Bay Artır" class="w-11 h-11 rounded-xl bg-indigo-500/25 hover:bg-indigo-500/35 border border-indigo-400/50 text-indigo-200 font-black text-base flex items-center justify-center tap-btn">+1</button>
+              <button type="button" onclick="adjustQuickMale(-1)" ondblclick="event.preventDefault()" aria-label="Bay Azalt" class="quick-counter-btn w-11 h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-black text-base flex items-center justify-center tap-btn">-1</button>
+              <button type="button" onclick="adjustQuickMale(1)" ondblclick="event.preventDefault()" aria-label="Bay Artır" class="quick-counter-btn w-11 h-11 rounded-xl bg-indigo-500/25 hover:bg-indigo-500/35 border border-indigo-400/50 text-indigo-200 font-black text-base flex items-center justify-center tap-btn">+1</button>
             </div>
           </div>
         </div>
 
-        <!-- BAYAN KARTI (Rose/Pink Vurgu - Sadece -1 ve +1) -->
+        <!-- BAYAN KARTI (Sadece -1 ve +1) -->
         <div class="bg-panel border border-rose-500/35 rounded-2xl p-2.5 flex flex-col justify-between shadow-lg shadow-rose-950/20">
           <div class="flex items-center justify-between">
             <span class="text-xs font-black uppercase tracking-wider text-rose-400">BAYAN</span>
@@ -134,9 +151,24 @@
           <div class="flex items-center justify-between gap-2 mt-1.5">
             <div id="total-female-display" class="text-3xl font-black text-white tabular-nums tracking-tight">0</div>
             <div class="flex items-center gap-1.5">
-              <button type="button" onclick="adjustQuickFemale(-1)" aria-label="Bayan Azalt" class="w-11 h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-black text-base flex items-center justify-center tap-btn">-1</button>
-              <button type="button" onclick="adjustQuickFemale(1)" aria-label="Bayan Artır" class="w-11 h-11 rounded-xl bg-rose-500/25 hover:bg-rose-500/35 border border-rose-400/50 text-rose-200 font-black text-base flex items-center justify-center tap-btn">+1</button>
+              <button type="button" onclick="adjustQuickFemale(-1)" ondblclick="event.preventDefault()" aria-label="Bayan Azalt" class="quick-counter-btn w-11 h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-black text-base flex items-center justify-center tap-btn">-1</button>
+              <button type="button" onclick="adjustQuickFemale(1)" ondblclick="event.preventDefault()" aria-label="Bayan Artır" class="quick-counter-btn w-11 h-11 rounded-xl bg-rose-500/25 hover:bg-rose-500/35 border border-rose-400/50 text-rose-200 font-black text-base flex items-center justify-center tap-btn">+1</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENEL TOPLAM & ORAN BARI -->
+      <div class="bg-panel border border-zinc-800/90 rounded-2xl px-3.5 py-2 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">GENEL TOPLAM</span>
+          <span id="grand-total-display" class="text-lg font-black text-emerald-400 tabular-nums">0</span>
+          <span class="text-[11px] font-semibold text-zinc-500">Kişi</span>
+        </div>
+        <div class="flex items-center gap-2 flex-1 max-w-[160px]">
+          <div class="w-full h-2 bg-zinc-900 rounded-full overflow-hidden flex border border-zinc-800">
+            <div id="ratio-bar-male" style="width: 50%" class="h-full bg-indigo-500 transition-all duration-300"></div>
+            <div id="ratio-bar-female" style="width: 50%" class="h-full bg-rose-500 transition-all duration-300"></div>
           </div>
         </div>
       </div>
@@ -150,19 +182,19 @@
   <main class="max-w-[480px] mx-auto px-3.5 pt-4 space-y-4">
 
     <!-- ======================================================= -->
-    <!-- SEKME 1: GİRİŞ EKLE (SADECE BAY MİSAFİR KAYDI)          -->
+    <!-- SEKME 1: HIZLI GİRİŞ (SADECE BAY MİSAFİR KAYDI)         -->
     <!-- ======================================================= -->
     <section id="tab-entry" class="space-y-4">
       <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-4 shadow-xl">
         <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
           <h2 class="text-sm font-extrabold uppercase tracking-wider text-white">Bay Misafir Giriş Kaydı</h2>
-          <span class="text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full">Hızlı Form</span>
+          <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">Hızlı Form</span>
         </div>
 
         <!-- 1. Bay Misafir Adı -->
         <div>
           <label for="entry-guest-name" class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
-            1. Bay Misafir Adı
+            1. Misafir Adı (Bay)
           </label>
           <div class="relative">
             <input
@@ -170,9 +202,9 @@
               id="entry-guest-name"
               placeholder="Örn: Kaan Duralı"
               autocomplete="off"
-              class="w-full h-12 bg-surface border border-zinc-700 focus:border-amber-400 rounded-2xl px-4 pr-11 text-white placeholder-zinc-500 focus:outline-none transition"
+              class="w-full h-12 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-2xl px-4 pr-11 text-white placeholder-zinc-500 focus:outline-none transition"
             />
-            <button type="button" onclick="clearEntryGuestInput()" aria-label="Temizle" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white">
+            <button type="button" onclick="clearEntryGuestInput()" aria-label="Temizle" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
           </div>
@@ -182,7 +214,7 @@
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-bold uppercase tracking-wider text-zinc-400">2. Referans / Çalışan</label>
-            <button type="button" onclick="openStaffModal()" class="text-xs font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1 tap-btn">
+            <button type="button" onclick="openStaffModal()" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1 tap-btn">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
               Ekle / Düzenle
             </button>
@@ -224,30 +256,30 @@
         <div class="grid grid-cols-5 gap-2.5">
           <div class="col-span-2">
             <div class="flex items-center justify-between mb-1">
-              <label for="entry-time" class="text-xs font-bold uppercase tracking-wider text-zinc-400">5. Saat</label>
-              <button type="button" onclick="resetEntryTimeAuto()" class="text-[10px] font-bold text-emerald-400 hover:underline">Şu An</button>
+              <label for="entry-time" class="text-xs font-bold uppercase tracking-wider text-zinc-400">5. Giriş Saati</label>
+              <button type="button" onclick="resetEntryTimeAuto()" class="text-[10px] font-bold text-emerald-400 hover:underline tap-btn">Şu An</button>
             </div>
             <input
               type="time"
               id="entry-time"
               oninput="markEntryTimeManual()"
-              class="w-full h-12 bg-surface border border-zinc-700 focus:border-amber-400 rounded-2xl px-3 text-white font-bold tabular-nums focus:outline-none"
+              class="w-full h-12 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-2xl px-3 text-white font-bold tabular-nums focus:outline-none"
             />
           </div>
           <div class="col-span-3">
-            <label for="entry-note" class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Not (Opsiyonel)</label>
+            <label for="entry-note" class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Not / Loca (Opsiyonel)</label>
             <input
               type="text"
               id="entry-note"
               placeholder="Örn: Loca 3"
               autocomplete="off"
-              class="w-full h-12 bg-surface border border-zinc-700 focus:border-amber-400 rounded-2xl px-3.5 text-white placeholder-zinc-500 focus:outline-none"
+              class="w-full h-12 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-2xl px-3.5 text-white placeholder-zinc-500 focus:outline-none"
             />
           </div>
         </div>
 
         <!-- Kaydet Butonu -->
-        <button type="button" onclick="saveDirectEntry()" class="w-full h-14 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition tap-btn">
+        <button type="button" onclick="saveDirectEntry()" class="w-full h-14 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition tap-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
           Girişi Kaydet
         </button>
@@ -257,7 +289,7 @@
       <div class="space-y-2">
         <div class="flex items-center justify-between px-1">
           <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400">Son Eklenen Girişler</h3>
-          <button type="button" onclick="switchTab('logs')" class="text-xs font-bold text-amber-400 hover:underline">Tüm Akış →</button>
+          <button type="button" onclick="switchTab('logs')" class="text-xs font-bold text-emerald-400 hover:underline tap-btn">Tüm Akış →</button>
         </div>
         <div id="recent-entries-container" class="space-y-2"></div>
       </div>
@@ -268,13 +300,13 @@
     <!-- ======================================================= -->
     <section id="tab-reservations" class="hidden space-y-4">
       <div class="grid grid-cols-2 gap-2.5">
-        <button type="button" onclick="openNewResModal()" class="h-12 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-xs rounded-2xl px-3 flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/15 tap-btn">
+        <button type="button" onclick="openNewResModal()" class="h-12 bg-emerald-400 hover:bg-emerald-300 text-zinc-950 font-extrabold text-xs rounded-2xl px-3 flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/15 tap-btn">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
           Rezervasyon Ekle
         </button>
-        <button type="button" onclick="openBulkResModal()" class="h-12 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 font-extrabold text-xs rounded-2xl px-3 flex items-center justify-center gap-1.5 tap-btn">
+        <button type="button" onclick="openBulkResModal()" class="h-12 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 font-extrabold text-xs rounded-2xl px-3 flex items-center justify-center gap-1.5 tap-btn">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-          WhatsApp Toplu Yapıştır
+          Toplu Yapıştır (WhatsApp)
         </button>
       </div>
 
@@ -286,7 +318,7 @@
           id="res-search-input"
           oninput="renderReservations()"
           placeholder="Rezervasyonlarda isim, not veya referans ara..."
-          class="w-full h-12 bg-panel border border-zinc-800 focus:border-amber-400 rounded-2xl pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none"
+          class="w-full h-12 bg-panel border border-zinc-800 focus:border-emerald-400 rounded-2xl pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none"
         />
       </div>
 
@@ -311,7 +343,7 @@
           </div>
           <span id="checkedin-res-badge-text" class="text-xs font-bold text-zinc-400">0 giriş yaptı</span>
         </div>
-        <div id="checkedin-res-list" class="space-y-2"></div>
+        <div id="checkedin-res-list" class="space-y-2.5"></div>
       </div>
     </section>
 
@@ -327,15 +359,15 @@
             id="log-search-input"
             oninput="renderLogs()"
             placeholder="Misafir ismi, not veya referans ara..."
-            class="w-full h-11 bg-surface border border-zinc-800 focus:border-amber-400 rounded-xl pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none"
+            class="w-full h-11 bg-surface border border-zinc-800 focus:border-emerald-400 rounded-xl pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none"
           />
         </div>
 
         <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <button type="button" onclick="setLogFilter('ALL')" id="lfilter-ALL" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap">Tümü</button>
-          <button type="button" onclick="setLogFilter('Şişe Servisi')" id="lfilter-Şişe Servisi" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap">Şişe Servisi</button>
-          <button type="button" onclick="setLogFilter('VIP Geçiş')" id="lfilter-VIP Geçiş" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap">VIP Geçiş</button>
-          <button type="button" onclick="setLogFilter('Biletli Geçiş')" id="lfilter-Biletli Geçiş" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap">Biletli Geçiş</button>
+          <button type="button" onclick="setLogFilter('ALL')" id="lfilter-ALL" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap tap-btn">Tümü</button>
+          <button type="button" onclick="setLogFilter('Şişe Servisi')" id="lfilter-Şişe Servisi" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn">Şişe</button>
+          <button type="button" onclick="setLogFilter('VIP Geçiş')" id="lfilter-VIP Geçiş" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn">VIP</button>
+          <button type="button" onclick="setLogFilter('Biletli Geçiş')" id="lfilter-Biletli Geçiş" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn">Biletli</button>
         </div>
       </div>
 
@@ -345,7 +377,7 @@
     <!-- ======================================================= -->
     <!-- SEKME 4: VARDİYA ÖZETİ & SAATLİK YOĞUNLUK GRAFİĞİ       -->
     <!-- ======================================================= -->
-    <section id="tab-report" class="hidden space-y-4 pb-6">
+    <section id="tab-report" class="hidden space-y-4 pb-8">
 
       <!-- 1. SAATLİK YOĞUNLUK GRAFİĞİ (TÜM GİRİŞLERE BAĞLI) -->
       <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-3 shadow-xl">
@@ -355,8 +387,8 @@
             <p class="text-[11px] text-zinc-400 mt-0.5">Tüm girişler (Bay formları, Rezervasyon & +1/-1 Bay/Bayan)</p>
           </div>
           <div class="text-right shrink-0">
-            <span class="text-[10px] font-bold uppercase text-zinc-400 block">Zirve Saati</span>
-            <span id="peak-hour-badge" class="inline-block mt-0.5 text-xs font-black text-amber-400 bg-amber-400/15 border border-amber-400/30 px-2.5 py-0.5 rounded-lg">--:--</span>
+            <span class="text-[10px] font-bold uppercase text-zinc-400 block">En Yoğun Saat</span>
+            <span id="peak-hour-badge" class="inline-block mt-0.5 text-xs font-black text-emerald-400 bg-emerald-400/15 border border-emerald-400/30 px-2.5 py-0.5 rounded-lg">--:--</span>
           </div>
         </div>
 
@@ -377,16 +409,11 @@
         <div id="hourly-chart-container" class="bg-surface/90 border border-zinc-800/90 rounded-2xl p-3"></div>
       </div>
 
-      <!-- 2. VARDİYA ÖZETİ & REFERANS DETAYLARI -->
+      <!-- 2. VARDİYA ÖZETİ & REFERANS DETAYLARI (MASA/KAYIT ADEDİ BAZLI) -->
       <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-          <div>
-            <h2 class="text-base font-extrabold text-white">Vardiya Özeti</h2>
-            <p id="report-date-subtitle" class="text-xs text-zinc-400 mt-0.5"></p>
-          </div>
-          <button type="button" onclick="openResetModal()" class="text-[11px] font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 px-3 py-1.5 rounded-xl tap-btn">
-            Yeni Gece Başlat
-          </button>
+        <div class="border-b border-zinc-800 pb-3">
+          <h2 class="text-base font-extrabold text-white">Vardiya Özeti</h2>
+          <p id="report-date-subtitle" class="text-xs text-zinc-400 mt-0.5"></p>
         </div>
 
         <!-- Toplam Kişi Kartları -->
@@ -401,26 +428,26 @@
           </div>
           <div class="bg-surface border border-zinc-700 rounded-2xl p-2.5 text-center">
             <div class="text-[11px] font-bold text-zinc-300">Genel Toplam</div>
-            <div id="rep-grand-total" class="text-xl font-black text-amber-400 tabular-nums mt-0.5">0</div>
+            <div id="rep-grand-total" class="text-xl font-black text-emerald-400 tabular-nums mt-0.5">0</div>
           </div>
         </div>
 
-        <!-- Giriş Türü Dağılımı -->
+        <!-- Giriş Türü Dağılımı (Kayıt / Masa Adedi Olarak) -->
         <div class="grid grid-cols-3 gap-2">
           <div class="bg-surface border border-amber-500/25 rounded-2xl p-2.5">
-            <div class="text-[11px] font-bold text-amber-400 truncate">Toplam Şişe Servisi</div>
-            <div id="rep-sise-male" class="text-base font-black text-white tabular-nums mt-1">0 Bay</div>
-            <div id="rep-sise-groups" class="text-[11px] text-zinc-400">0 giriş</div>
+            <div class="text-[11px] font-bold text-amber-400 truncate">Şişe Servisi</div>
+            <div id="rep-sise-count" class="text-base font-black text-white tabular-nums mt-1">0 Şişe</div>
+            <div id="rep-sise-male" class="text-[11px] text-zinc-400">0 Bay</div>
           </div>
           <div class="bg-surface border border-purple-500/25 rounded-2xl p-2.5">
-            <div class="text-[11px] font-bold text-purple-400 truncate">Toplam VIP Geçiş</div>
-            <div id="rep-vip-male" class="text-base font-black text-white tabular-nums mt-1">0 Bay</div>
-            <div id="rep-vip-groups" class="text-[11px] text-zinc-400">0 giriş</div>
+            <div class="text-[11px] font-bold text-purple-400 truncate">VIP Geçiş</div>
+            <div id="rep-vip-count" class="text-base font-black text-white tabular-nums mt-1">0 VIP</div>
+            <div id="rep-vip-male" class="text-[11px] text-zinc-400">0 Bay</div>
           </div>
-          <div class="bg-surface border border-emerald-500/25 rounded-2xl p-2.5">
-            <div class="text-[11px] font-bold text-emerald-400 truncate">Toplam Biletli Geçiş</div>
-            <div id="rep-biletli-male" class="text-base font-black text-white tabular-nums mt-1">0 Bay</div>
-            <div id="rep-biletli-groups" class="text-[11px] text-zinc-400">0 giriş</div>
+          <div class="bg-surface border border-cyan-500/25 rounded-2xl p-2.5">
+            <div class="text-[11px] font-bold text-cyan-400 truncate">Biletli Geçiş</div>
+            <div id="rep-biletli-count" class="text-base font-black text-white tabular-nums mt-1">0 Bilet</div>
+            <div id="rep-biletli-male" class="text-[11px] text-zinc-400">0 Bay</div>
           </div>
         </div>
 
@@ -435,6 +462,14 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
           WhatsApp / Pano İçin Raporu Kopyala
         </button>
+
+        <!-- Yeni Gece Başlat Butonu (YALNIZCA Vardiya Özeti sekmesinin en altında) -->
+        <div class="pt-4 border-t border-zinc-800/90">
+          <button type="button" onclick="openResetModal()" class="w-full h-12 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-extrabold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            Yeni Gece Başlat (Vardiyayı Sıfırla)
+          </button>
+        </div>
       </div>
     </section>
 
@@ -445,24 +480,24 @@
   <!-- ========================================================= -->
   <nav class="fixed bottom-0 inset-x-0 z-30 bg-oled/95 backdrop-blur-xl border-t border-zinc-800 px-2 pt-2" style="padding-bottom: max(12px, env(safe-area-inset-bottom));">
     <div class="max-w-[480px] mx-auto grid grid-cols-4 gap-1">
-      <button type="button" onclick="switchTab('entry')" id="nav-entry" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-amber-400 bg-amber-500/10 relative">
+      <button type="button" onclick="switchTab('entry')" id="nav-entry" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-emerald-400 bg-emerald-500/10 relative tap-btn">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <span class="text-[11px] font-bold">Giriş Ekle</span>
+        <span class="text-[11px] font-bold">Hızlı Giriş</span>
       </button>
 
-      <button type="button" onclick="switchTab('reservations')" id="nav-reservations" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative">
+      <button type="button" onclick="switchTab('reservations')" id="nav-reservations" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
         <span class="text-[11px] font-bold">Rezervasyon</span>
         <span id="nav-res-badge" class="hidden absolute top-1 right-2.5 bg-amber-400 text-zinc-950 text-[10px] font-black px-1.5 rounded-full">0</span>
       </button>
 
-      <button type="button" onclick="switchTab('logs')" id="nav-logs" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative">
+      <button type="button" onclick="switchTab('logs')" id="nav-logs" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
         <span class="text-[11px] font-bold">Gece Akışı</span>
         <span id="nav-logs-badge" class="hidden absolute top-1 right-2.5 bg-indigo-500 text-white text-[10px] font-black px-1.5 rounded-full">0</span>
       </button>
 
-      <button type="button" onclick="switchTab('report')" id="nav-report" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative">
+      <button type="button" onclick="switchTab('report')" id="nav-report" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
         <span class="text-[11px] font-bold">Vardiya Özeti</span>
       </button>
@@ -476,7 +511,7 @@
     <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
         <h3 class="text-base font-extrabold text-white">Yeni Rezervasyon Ekle</h3>
-        <button type="button" onclick="closeNewResModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white">
+        <button type="button" onclick="closeNewResModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -484,12 +519,12 @@
       <div class="space-y-3">
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Misafir Adı</label>
-          <input type="text" id="mres-name" placeholder="Örn: Mert Yılmaz" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-4 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400" />
+          <input type="text" id="mres-name" placeholder="Örn: Mert Yılmaz" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-4 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400" />
         </div>
 
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Referans / Çalışan</label>
-          <select id="mres-staff" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-white font-semibold focus:outline-none focus:border-amber-400"></select>
+          <select id="mres-staff" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-white font-semibold focus:outline-none focus:border-emerald-400"></select>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
@@ -504,7 +539,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Türü</label>
-            <select id="mres-type" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
+            <select id="mres-type" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-emerald-400">
               <option value="Şişe Servisi">Şişe Servisi</option>
               <option value="VIP Geçiş">VIP Geçiş</option>
               <option value="Biletli Geçiş">Biletli Geçiş</option>
@@ -514,13 +549,74 @@
 
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Not / Masa No (Opsiyonel)</label>
-          <input type="text" id="mres-note" placeholder="Örn: Loca 2, saat 00:30" class="w-full h-11 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400" />
+          <input type="text" id="mres-note" placeholder="Örn: Loca 2, saat 00:30" class="w-full h-11 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400" />
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="closeNewResModal()" class="h-12 bg-zinc-800 text-zinc-300 font-bold rounded-2xl text-sm tap-btn">Vazgeç</button>
-        <button type="button" onclick="submitNewReservation()" class="h-12 bg-amber-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Listeye Ekle</button>
+        <button type="button" onclick="submitNewReservation()" class="h-12 bg-emerald-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Listeye Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 1B: REZERVASYON DÜZENLEME & NOT EKLEME              -->
+  <!-- ========================================================= -->
+  <div id="edit-res-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+    <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div>
+          <h3 class="text-base font-extrabold text-white">Rezervasyonu Düzenle</h3>
+          <p id="eres-status-hint" class="text-[11px] text-zinc-400 mt-0.5">Bilgileri veya masa/loca notunu güncelleyin</p>
+        </div>
+        <button type="button" onclick="closeEditResModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <input type="hidden" id="eres-id" />
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 mb-1">Misafir Adı</label>
+          <input type="text" id="eres-name" placeholder="Misafir adı" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-4 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 mb-1">Referans / Çalışan</label>
+          <select id="eres-staff" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-white font-semibold focus:outline-none focus:border-emerald-400"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı (1-4)</label>
+            <div class="grid grid-cols-4 gap-1">
+              <button type="button" data-erescount="1" onclick="selectEditResCount(1)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">1</button>
+              <button type="button" data-erescount="2" onclick="selectEditResCount(2)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">2</button>
+              <button type="button" data-erescount="3" onclick="selectEditResCount(3)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">3</button>
+              <button type="button" data-erescount="4" onclick="selectEditResCount(4)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">4</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Türü</label>
+            <select id="eres-type" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-emerald-400">
+              <option value="Şişe Servisi">Şişe Servisi</option>
+              <option value="VIP Geçiş">VIP Geçiş</option>
+              <option value="Biletli Geçiş">Biletli Geçiş</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 mb-1">Not / Masa No</label>
+          <input type="text" id="eres-note" placeholder="Örn: Loca 4, 2 şişe açacak" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="deleteResFromModal()" class="h-12 bg-red-500/15 border border-red-500/30 text-red-400 font-bold rounded-2xl text-sm tap-btn">Rezervasyonu Sil</button>
+        <button type="button" onclick="saveEditedReservation()" class="h-12 bg-emerald-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Değişiklikleri Kaydet</button>
       </div>
     </div>
   </div>
@@ -532,10 +628,10 @@
     <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
         <div>
-          <h3 class="text-base font-extrabold text-white">WhatsApp Toplu Yapıştır</h3>
+          <h3 class="text-base font-extrabold text-white">Toplu Yapıştır (WhatsApp)</h3>
           <p class="text-[11px] text-zinc-400">Her satıra bir misafir gelecek şekilde yapıştırın</p>
         </div>
-        <button type="button" onclick="closeBulkResModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white">
+        <button type="button" onclick="closeBulkResModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -543,11 +639,11 @@
       <div class="grid grid-cols-2 gap-2.5">
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Referans / Çalışan</label>
-          <select id="bulk-res-staff" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-amber-400"></select>
+          <select id="bulk-res-staff" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-emerald-400"></select>
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Türü</label>
-          <select id="bulk-res-type" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
+          <select id="bulk-res-type" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-emerald-400">
             <option value="Şişe Servisi">Şişe Servisi</option>
             <option value="VIP Geçiş">VIP Geçiş</option>
             <option value="Biletli Geçiş">Biletli Geçiş</option>
@@ -561,7 +657,7 @@
           id="bulk-res-textarea"
           rows="5"
           placeholder="Örn:&#10;Kaan Duralı 3 bay&#10;Mert Yılmaz 2 bay&#10;Emre Kaya"
-          class="w-full bg-surface border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+          class="w-full bg-surface border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400"
         ></textarea>
         <p class="text-[11px] text-zinc-500 mt-1">Satır içinde "2 bay", "3 kişi" gibi 1-4 arası sayı yazıyorsa otomatik algılanır.</p>
       </div>
@@ -580,7 +676,7 @@
     <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
         <h3 class="text-base font-extrabold text-white">Referans / Çalışan Listesi</h3>
-        <button type="button" onclick="closeStaffModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white">
+        <button type="button" onclick="closeStaffModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -591,9 +687,9 @@
           id="new-staff-input"
           placeholder="Yeni referans veya çalışan adı..."
           onkeydown="if(event.key==='Enter') addStaffMember()"
-          class="flex-1 h-12 bg-surface border border-zinc-700 rounded-2xl px-4 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+          class="flex-1 h-12 bg-surface border border-zinc-700 rounded-2xl px-4 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400"
         />
-        <button type="button" onclick="addStaffMember()" class="h-12 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black px-5 rounded-2xl tap-btn">
+        <button type="button" onclick="addStaffMember()" class="h-12 bg-emerald-400 hover:bg-emerald-300 text-zinc-950 font-black px-5 rounded-2xl tap-btn">
           Ekle
         </button>
       </div>
@@ -613,7 +709,7 @@
     <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
         <h3 class="text-base font-extrabold text-white">Giriş Kaydını Düzenle</h3>
-        <button type="button" onclick="closeEditEntryModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white">
+        <button type="button" onclick="closeEditEntryModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -623,24 +719,24 @@
       <div class="space-y-3">
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Misafir Adı</label>
-          <input type="text" id="edit-entry-name" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-white focus:outline-none focus:border-amber-400" />
+          <input type="text" id="edit-entry-name" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-white focus:outline-none focus:border-emerald-400" />
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="block text-xs font-bold text-zinc-400 mb-1">Referans / Çalışan</label>
-            <select id="edit-entry-staff" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white focus:outline-none focus:border-amber-400"></select>
+            <select id="edit-entry-staff" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white focus:outline-none focus:border-emerald-400"></select>
           </div>
           <div>
             <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Saati</label>
-            <input type="time" id="edit-entry-time" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white font-bold tabular-nums focus:outline-none focus:border-amber-400" />
+            <input type="time" id="edit-entry-time" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white font-bold tabular-nums focus:outline-none focus:border-emerald-400" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı (1-4)</label>
-            <select id="edit-entry-count" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white font-bold focus:outline-none focus:border-amber-400">
+            <select id="edit-entry-count" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white font-bold focus:outline-none focus:border-emerald-400">
               <option value="1">1 Bay</option>
               <option value="2">2 Bay</option>
               <option value="3">3 Bay</option>
@@ -649,7 +745,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Türü</label>
-            <select id="edit-entry-type" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white focus:outline-none focus:border-amber-400">
+            <select id="edit-entry-type" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white focus:outline-none focus:border-emerald-400">
               <option value="Şişe Servisi">Şişe Servisi</option>
               <option value="VIP Geçiş">VIP Geçiş</option>
               <option value="Biletli Geçiş">Biletli Geçiş</option>
@@ -659,13 +755,13 @@
 
         <div>
           <label class="block text-xs font-bold text-zinc-400 mb-1">Not</label>
-          <input type="text" id="edit-entry-note" class="w-full h-11 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-sm text-white focus:outline-none focus:border-amber-400" />
+          <input type="text" id="edit-entry-note" class="w-full h-11 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-sm text-white focus:outline-none focus:border-emerald-400" />
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="deleteEntryFromModal()" class="h-12 bg-red-500/15 border border-red-500/30 text-red-400 font-bold rounded-2xl text-sm tap-btn">Kaydı Sil</button>
-        <button type="button" onclick="saveEditedEntry()" class="h-12 bg-amber-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Güncelle</button>
+        <button type="button" onclick="saveEditedEntry()" class="h-12 bg-emerald-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Güncelle</button>
       </div>
     </div>
   </div>
@@ -689,38 +785,6 @@
     </div>
   </div>
 
-  <!-- ========================================================= -->
-  <!-- MODAL 6: iPHONE ANA EKRANA EKLEME REHBERİ                 -->
-  <!-- ========================================================= -->
-  <div id="pwa-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
-    <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-        <h3 class="text-base font-extrabold text-white">iPhone Ana Ekrana Ekleme</h3>
-        <button type="button" onclick="closePwaModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-      <ol class="space-y-3 text-sm text-zinc-300">
-        <li class="flex items-start gap-3">
-          <span class="w-6 h-6 rounded-full bg-amber-400/20 text-amber-400 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
-          <span>Uygulama linkini iPhone'unda <strong>Safari</strong> tarayıcısında aç.</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="w-6 h-6 rounded-full bg-amber-400/20 text-amber-400 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
-          <span>Alt menüdeki <strong>Paylaş (Kare içinde yukarı ok)</strong> butonuna dokun.</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="w-6 h-6 rounded-full bg-amber-400/20 text-amber-400 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
-          <span>Menüyü kaydırıp <strong>"Ana Ekrana Ekle"</strong> seçeneğine dokun ve <strong>Ekle</strong> de.</span>
-        </li>
-      </ol>
-      <p class="text-xs text-zinc-400 bg-surface p-3 rounded-2xl border border-zinc-800">
-        Ana ekrandan açtığında Safari çubukları gizlenir, tam ekran ve internet kopsa bile verilerini telefonunda saklayarak çalışır.
-      </p>
-      <button type="button" onclick="closePwaModal()" class="w-full h-12 bg-amber-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Anladım</button>
-    </div>
-  </div>
-
   <!-- BİLDİRİM TOAST -->
   <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-200">
     <div class="bg-zinc-900/95 border border-zinc-700 text-white px-4 py-2.5 rounded-full shadow-2xl text-xs font-bold flex items-center gap-2 whitespace-nowrap">
@@ -731,16 +795,36 @@
 
   <script>
     // =========================================================
+    // MOBİL SAFARI ÇİFT DOKUNUŞ ZOOM / KAYMA KORUMASI
+    // =========================================================
+    let lastTouchEndTime = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = Date.now();
+      if (now - lastTouchEndTime <= 320) {
+        const targetBtn = event.target.closest('button, .quick-counter-btn, .tap-btn');
+        if (targetBtn) {
+          event.preventDefault();
+          targetBtn.click();
+        }
+      }
+      lastTouchEndTime = now;
+    }, { passive: false });
+
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    // =========================================================
     // UYGULAMA DURUMU & LOCALSTORAGE KALICILIĞI
     // =========================================================
-    const STORAGE_KEY = 'doorflow_night_ops_v3_0';
+    const STORAGE_KEY = 'frog_kayit_v36';
 
     const DEFAULT_STATE = {
-      staffList: ['Avcu Bey', 'Kaan', 'İşletme'],
+      staffList: ['Avcu Bey', 'İşletme', 'Kapı'],
       entries: [],          // { id, guestName, staff, maleCount, entryType, time, note, timestamp, fromReservationId? }
       reservations: [],     // { id, guestName, staff, maleCount, entryType, note, status: 'pending'|'checked_in', checkinTime?, linkedEntryId?, createdAt }
-      quickMaleEvents: [],  // { id, hour: '23', timestamp } -> +1 eklendiğinde eklenir, -1 yapıldığında son olay çıkarılır
-      femaleEvents: []      // { id, hour: '23', timestamp } -> +1 eklendiğinde eklenir, -1 yapıldığında son olay çıkarılır
+      quickMaleEvents: [],  // { id, hour: '23', timestamp }
+      femaleEvents: []      // { id, hour: '23', timestamp }
     };
 
     let state = loadState();
@@ -748,13 +832,19 @@
     let selectedEntryCount = 1;
     let selectedEntryType = 'Şişe Servisi';
     let selectedModalResCount = 1;
+    let selectedEditResCount = 1;
     let currentLogFilter = 'ALL';
     let isEntryTimeManual = false;
     let selectedChartHour = null;
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw =
+          localStorage.getItem(STORAGE_KEY) ||
+          localStorage.getItem('frog_kayit_v35') ||
+          localStorage.getItem('frog_kayit_v34') ||
+          localStorage.getItem('frog_kayit_v33') ||
+          localStorage.getItem('frog_kayit_v32');
         if (!raw) return structuredClone(DEFAULT_STATE);
         const parsed = JSON.parse(raw);
         return {
@@ -808,10 +898,14 @@
     }
 
     function syncLiveEntryClock() {
+      const nowStr = getCurrentHHMM();
+      const headerClock = document.getElementById('header-live-clock');
+      if (headerClock) headerClock.textContent = nowStr;
+
       if (!isEntryTimeManual) {
         const input = document.getElementById('entry-time');
         if (input && document.activeElement !== input) {
-          input.value = getCurrentHHMM();
+          input.value = nowStr;
         }
       }
     }
@@ -852,10 +946,9 @@
           timestamp: Date.now()
         });
         saveState();
-        showToast(`+1 Bay eklendi (${getCurrentHourStr()}:00)`);
       } else if (delta < 0) {
         if (state.quickMaleEvents.length === 0) {
-          showToast('Hızlı bay sayacı 0 (kayıtlı grupları Gece Akışından silebilirsin)');
+          showToast('Hızlı bay sayacı 0');
           return;
         }
         state.quickMaleEvents.pop();
@@ -871,7 +964,6 @@
           timestamp: Date.now()
         });
         saveState();
-        showToast(`+1 Bayan eklendi (${getCurrentHourStr()}:00)`);
       } else if (delta < 0) {
         if (state.femaleEvents.length === 0) return;
         state.femaleEvents.pop();
@@ -889,14 +981,14 @@
       }
 
       if (state.staffList.length === 0) {
-        container.innerHTML = `<button type="button" onclick="openStaffModal()" class="text-xs font-bold text-amber-400 underline py-2">+ Önce referans / çalışan ekleyin</button>`;
+        container.innerHTML = `<button type="button" onclick="openStaffModal()" class="text-xs font-bold text-emerald-400 underline py-2 tap-btn">+ Önce referans / çalışan ekleyin</button>`;
         return;
       }
 
       container.innerHTML = state.staffList.map(staff => {
         const isSelected = staff === selectedEntryStaff;
         const cls = isSelected
-          ? 'bg-amber-400 text-zinc-950 border-amber-400 font-extrabold shadow-md shadow-amber-500/20'
+          ? 'bg-emerald-400 text-zinc-950 border-emerald-400 font-extrabold shadow-md shadow-emerald-500/20'
           : 'bg-surface text-zinc-300 border-zinc-800 hover:border-zinc-700 font-semibold';
         return `
           <button type="button" onclick="selectEntryStaff('${escapeHtml(staff)}')" class="min-h-[44px] px-3.5 py-2 rounded-xl text-xs border transition tap-btn ${cls}">
@@ -1003,7 +1095,7 @@
         : inactive;
 
       btnBiletli.className = type === 'Biletli Geçiş'
-        ? `${base} bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-lg shadow-emerald-500/10`
+        ? `${base} bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/10`
         : inactive;
     }
 
@@ -1040,11 +1132,11 @@
       resetEntryTimeAuto();
 
       saveState();
-      showToast(`${guestName} (${newEntry.maleCount} Bay) kaydedildi`);
+      showToast(`${guestName} (${newEntry.maleCount} Bay) eklendi`);
     }
 
     // =========================================================
-    // SEKME 2: REZERVASYON LİSTESİ (EKLE, TOPLU, İÇERİ AL)
+    // SEKME 2: REZERVASYON LİSTESİ (EKLE, DÜZENLE, TOPLU, İÇERİ AL)
     // =========================================================
     function openNewResModal() {
       const staffSel = document.getElementById('mres-staff');
@@ -1100,6 +1192,99 @@
       closeNewResModal();
       saveState();
       showToast(`${guestName} rezervasyonlara eklendi`);
+    }
+
+    // --- REZERVASYON DÜZENLEME & NOT EKLEME MODALI ---
+    function selectEditResCount(count) {
+      selectedEditResCount = Math.min(4, Math.max(1, Number(count) || 1));
+      document.querySelectorAll('.eres-count-btn').forEach(btn => {
+        const val = Number(btn.dataset.erescount);
+        if (val === selectedEditResCount) {
+          btn.className = 'eres-count-btn h-11 rounded-xl font-extrabold text-sm border border-indigo-400 bg-indigo-500/20 text-indigo-300 tap-btn';
+        } else {
+          btn.className = 'eres-count-btn h-11 rounded-xl font-extrabold text-sm border border-zinc-800 bg-surface text-zinc-400 tap-btn';
+        }
+      });
+    }
+
+    function openEditResModal(resId) {
+      const res = state.reservations.find(r => r.id === resId);
+      if (!res) return;
+
+      document.getElementById('eres-id').value = res.id;
+      document.getElementById('eres-name').value = res.guestName;
+      document.getElementById('eres-type').value = res.entryType || 'Şişe Servisi';
+      document.getElementById('eres-note').value = res.note || '';
+
+      const hint = document.getElementById('eres-status-hint');
+      if (res.status === 'checked_in') {
+        hint.textContent = 'İçeri alınmış kayıt — değişiklikler Gece Akışı & Rapora yansır';
+        hint.className = 'text-[11px] text-emerald-400 mt-0.5 font-semibold';
+      } else {
+        hint.textContent = 'Bekleyen rezervasyon bilgilerini veya notunu güncelleyin';
+        hint.className = 'text-[11px] text-zinc-400 mt-0.5';
+      }
+
+      const staffSel = document.getElementById('eres-staff');
+      const opts = Array.from(new Set([...state.staffList, res.staff]));
+      staffSel.innerHTML = opts.map(s => `<option value="${escapeHtml(s)}" ${s === res.staff ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
+
+      selectEditResCount(res.maleCount || 1);
+      document.getElementById('edit-res-modal').classList.remove('hidden');
+    }
+
+    function closeEditResModal() {
+      document.getElementById('edit-res-modal').classList.add('hidden');
+    }
+
+    function saveEditedReservation() {
+      const id = document.getElementById('eres-id').value;
+      const idx = state.reservations.findIndex(r => r.id === id);
+      if (idx === -1) return;
+
+      const name = document.getElementById('eres-name').value.trim();
+      if (!name) {
+        showToast('Lütfen misafir adını yazın');
+        return;
+      }
+
+      const staff = document.getElementById('eres-staff').value || 'Belirtilmedi';
+      const entryType = document.getElementById('eres-type').value || 'Şişe Servisi';
+      const note = document.getElementById('eres-note').value.trim();
+
+      const updatedRes = {
+        ...state.reservations[idx],
+        guestName: name,
+        staff,
+        maleCount: selectedEditResCount,
+        entryType,
+        note
+      };
+      state.reservations[idx] = updatedRes;
+
+      if (updatedRes.status === 'checked_in' && updatedRes.linkedEntryId) {
+        const eIdx = state.entries.findIndex(e => e.id === updatedRes.linkedEntryId);
+        if (eIdx !== -1) {
+          state.entries[eIdx] = {
+            ...state.entries[eIdx],
+            guestName: name,
+            staff,
+            maleCount: selectedEditResCount,
+            entryType,
+            note
+          };
+        }
+      }
+
+      closeEditResModal();
+      saveState();
+      showToast('Rezervasyon güncellendi');
+    }
+
+    function deleteResFromModal() {
+      const id = document.getElementById('eres-id').value;
+      closeEditResModal();
+      deleteReservation(id);
     }
 
     function openBulkResModal() {
@@ -1210,6 +1395,10 @@
     }
 
     function deleteReservation(resId) {
+      const target = state.reservations.find(r => r.id === resId);
+      if (target && target.status === 'checked_in' && target.linkedEntryId) {
+        state.entries = state.entries.filter(e => e.id !== target.linkedEntryId);
+      }
       state.reservations = state.reservations.filter(r => r.id !== resId);
       saveState();
       showToast('Rezervasyon silindi');
@@ -1241,26 +1430,35 @@
         pendingContainer.innerHTML = filteredPending.map(res => {
           const badge = getEntryTypeBadgeClass(res.entryType);
           return `
-            <div class="bg-panel border border-zinc-800 rounded-2xl p-3.5 flex items-center justify-between gap-2.5">
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 flex-wrap mb-1">
-                  <span class="text-xs font-extrabold text-amber-400 bg-amber-500/10 border border-amber-500/25 px-2 py-0.5 rounded-md truncate">${escapeHtml(res.staff)}</span>
-                  <span class="text-[11px] font-bold px-2 py-0.5 rounded-md border ${badge}">${escapeHtml(res.entryType)}</span>
+            <div class="bg-panel border border-zinc-800 rounded-2xl p-3.5 space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                    <span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded-md truncate">${escapeHtml(res.staff)}</span>
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md border ${badge}">${escapeHtml(res.entryType)}</span>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-extrabold text-white truncate">${escapeHtml(res.guestName)}</span>
+                    <span class="text-xs font-extrabold text-indigo-400 shrink-0">• ${res.maleCount} Bay</span>
+                  </div>
+                  ${res.note
+                    ? `<div class="text-[11px] text-amber-300/95 mt-1 break-words">📝 ${escapeHtml(res.note)}</div>`
+                    : `<div class="text-[10px] text-zinc-500 mt-1">Not / masa no eklenmedi</div>`
+                  }
                 </div>
-                <div class="flex items-baseline gap-2">
-                  <span class="text-sm font-extrabold text-white truncate">${escapeHtml(res.guestName)}</span>
-                  <span class="text-xs font-extrabold text-indigo-400 shrink-0">• ${res.maleCount} Bay</span>
-                </div>
-                ${res.note ? `<div class="text-[11px] text-zinc-400 mt-1 truncate">📝 ${escapeHtml(res.note)}</div>` : ''}
+                <button type="button" onclick="deleteReservation('${res.id}')" aria-label="Sil" class="w-9 h-9 rounded-xl bg-surface hover:bg-red-500/15 border border-zinc-800 text-zinc-400 hover:text-red-400 flex items-center justify-center shrink-0 tap-btn">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
               </div>
 
-              <div class="flex items-center gap-1.5 shrink-0">
-                <button type="button" onclick="checkInReservation('${res.id}')" class="h-12 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs px-3.5 rounded-xl shadow-md shadow-emerald-500/15 flex items-center gap-1 tap-btn">
+              <div class="flex items-center gap-2 pt-1.5 border-t border-zinc-800/80">
+                <button type="button" onclick="openEditResModal('${res.id}')" class="h-10 px-3 rounded-xl bg-surface hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-bold text-xs flex items-center justify-center gap-1.5 tap-btn">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  Düzenle
+                </button>
+                <button type="button" onclick="checkInReservation('${res.id}')" class="flex-1 h-10 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs px-3 rounded-xl shadow-md shadow-emerald-500/15 flex items-center justify-center gap-1.5 tap-btn">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                   İçeri Al
-                </button>
-                <button type="button" onclick="deleteReservation('${res.id}')" aria-label="Sil" class="w-11 h-12 rounded-xl bg-surface hover:bg-red-500/15 border border-zinc-800 text-zinc-400 hover:text-red-400 flex items-center justify-center tap-btn">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
               </div>
             </div>
@@ -1272,21 +1470,34 @@
         checkedInContainer.innerHTML = `<div class="text-center py-5 text-xs text-zinc-500 bg-panel/40 border border-zinc-800/70 rounded-2xl">Henüz giriş yapan rezervasyon yok.</div>`;
       } else {
         checkedInContainer.innerHTML = filteredCheckedIn.map(res => `
-          <div class="bg-surface/70 border border-emerald-500/20 rounded-2xl p-3 flex items-center justify-between gap-2.5">
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-                <span class="text-[11px] font-extrabold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-md tabular-nums">✓ ${escapeHtml(res.checkinTime || '--:--')}</span>
-                <span class="text-xs font-semibold text-zinc-400 truncate">${escapeHtml(res.staff)}</span>
-                <span class="text-[11px] text-zinc-500">• ${escapeHtml(res.entryType)}</span>
+          <div class="bg-surface/70 border border-emerald-500/20 rounded-2xl p-3 space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+                  <span class="text-[11px] font-extrabold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-md tabular-nums">✓ ${escapeHtml(res.checkinTime || '--:--')}</span>
+                  <span class="text-xs font-semibold text-zinc-300 truncate">${escapeHtml(res.staff)}</span>
+                  <span class="text-[11px] text-zinc-400">• ${escapeHtml(res.entryType)}</span>
+                </div>
+                <div class="flex items-baseline gap-2">
+                  <span class="text-sm font-bold text-zinc-200 truncate">${escapeHtml(res.guestName)}</span>
+                  <span class="text-xs font-bold text-indigo-400/90 shrink-0">• ${res.maleCount} Bay</span>
+                </div>
+                ${res.note ? `<div class="text-[11px] text-amber-300/85 mt-1 break-words">📝 ${escapeHtml(res.note)}</div>` : ''}
               </div>
-              <div class="flex items-baseline gap-2">
-                <span class="text-sm font-bold text-zinc-300 line-through decoration-zinc-600 truncate">${escapeHtml(res.guestName)}</span>
-                <span class="text-xs font-bold text-indigo-400/80 shrink-0">${res.maleCount} Bay</span>
-              </div>
+              <button type="button" onclick="deleteReservation('${res.id}')" aria-label="Sil" class="w-9 h-9 rounded-xl bg-zinc-900 hover:bg-red-500/15 border border-zinc-800 text-zinc-400 hover:text-red-400 flex items-center justify-center shrink-0 tap-btn">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
             </div>
-            <button type="button" onclick="undoCheckInReservation('${res.id}')" class="h-10 text-[11px] font-bold text-zinc-300 hover:text-amber-300 bg-zinc-900 border border-zinc-800 px-3 rounded-xl shrink-0 tap-btn">
-              Geri Al
-            </button>
+
+            <div class="flex items-center justify-end gap-2 pt-1.5 border-t border-zinc-800/70">
+              <button type="button" onclick="openEditResModal('${res.id}')" class="h-9 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 font-bold text-[11px] flex items-center gap-1 tap-btn">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                Düzenle
+              </button>
+              <button type="button" onclick="undoCheckInReservation('${res.id}')" class="h-9 text-[11px] font-bold text-zinc-300 hover:text-amber-300 bg-zinc-900 border border-zinc-800 px-3 rounded-xl shrink-0 tap-btn">
+                Geri Al
+              </button>
+            </div>
           </div>
         `).join('');
       }
@@ -1298,7 +1509,7 @@
     function getEntryTypeBadgeClass(type) {
       if (type === 'Şişe Servisi') return 'bg-amber-500/15 text-amber-300 border-amber-500/30';
       if (type === 'VIP Geçiş') return 'bg-purple-500/15 text-purple-300 border-purple-500/30';
-      return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+      return 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
     }
 
     function buildEntryCardHTML(entry) {
@@ -1312,7 +1523,7 @@
           <div onclick="openEditEntryModal('${entry.id}')" class="min-w-0 flex-1 cursor-pointer">
             <div class="flex items-center gap-1.5 flex-wrap mb-1">
               <span class="text-xs font-extrabold text-zinc-200 bg-surface px-2 py-0.5 rounded-md border border-zinc-800 tabular-nums">${escapeHtml(entry.time)}</span>
-              <span class="text-xs font-extrabold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md truncate">${escapeHtml(entry.staff)}</span>
+              <span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md truncate">${escapeHtml(entry.staff)}</span>
               <span class="text-[11px] font-bold px-2 py-0.5 rounded-md border ${badge}">${escapeHtml(entry.entryType)}</span>
               ${rezTag}
             </div>
@@ -1349,9 +1560,9 @@
       currentLogFilter = filter;
       document.querySelectorAll('.log-filter-btn').forEach(btn => {
         if (btn.id === `lfilter-${filter}`) {
-          btn.className = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap';
+          btn.className = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap tap-btn';
         } else {
-          btn.className = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap';
+          btn.className = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn';
         }
       });
       renderLogs();
@@ -1431,16 +1642,35 @@
       }
 
       const count = Math.min(4, Math.max(1, parseInt(document.getElementById('edit-entry-count').value, 10) || 1));
+      const staff = document.getElementById('edit-entry-staff').value;
+      const time = document.getElementById('edit-entry-time').value || '00:00';
+      const entryType = document.getElementById('edit-entry-type').value;
+      const note = document.getElementById('edit-entry-note').value.trim();
 
       state.entries[idx] = {
         ...state.entries[idx],
         guestName: name,
-        staff: document.getElementById('edit-entry-staff').value,
-        time: document.getElementById('edit-entry-time').value || '00:00',
+        staff,
+        time,
         maleCount: count,
-        entryType: document.getElementById('edit-entry-type').value,
-        note: document.getElementById('edit-entry-note').value.trim()
+        entryType,
+        note
       };
+
+      if (state.entries[idx].fromReservationId) {
+        const rIdx = state.reservations.findIndex(r => r.id === state.entries[idx].fromReservationId);
+        if (rIdx !== -1) {
+          state.reservations[rIdx] = {
+            ...state.reservations[rIdx],
+            guestName: name,
+            staff,
+            maleCount: count,
+            entryType,
+            note,
+            checkinTime: time
+          };
+        }
+      }
 
       closeEditEntryModal();
       saveState();
@@ -1465,20 +1695,17 @@
         return map[key];
       };
 
-      // 1. Tüm detaylı bay girişleri + Rezervasyondan içeri alınanlar
       state.entries.forEach(entry => {
         const h = extractHourStr(entry.time);
         const bucket = ensureHour(h);
         bucket.male += Number(entry.maleCount) || 0;
       });
 
-      // 2. Üst karttaki +1/-1 hızlı bay hareketleri
       state.quickMaleEvents.forEach(ev => {
         const bucket = ensureHour(ev.hour);
         bucket.male += 1;
       });
 
-      // 3. Üst karttaki +1/-1 bayan hareketleri
       state.femaleEvents.forEach(ev => {
         const bucket = ensureHour(ev.hour);
         bucket.female += 1;
@@ -1494,7 +1721,6 @@
         }))
         .filter(b => b.total > 0);
 
-      // Gece vardiyası kronolojik sıralaması (12:00..23:00 önce, 00:00..11:00 sonra)
       const nightOrderValue = (hStr) => {
         const h = parseInt(hStr, 10);
         return h >= 12 ? h : h + 24;
@@ -1542,7 +1768,7 @@
       }
 
       const activeBucket = buckets.find(b => b.hour === selectedChartHour) || peakBucket;
-      infoLabel.innerHTML = `<span class="text-amber-400">${activeBucket.label}</span> → <span class="text-indigo-400">${activeBucket.male} Bay</span> • <span class="text-rose-400">${activeBucket.female} Bayan</span> (${activeBucket.total})`;
+      infoLabel.innerHTML = `<span class="text-emerald-400">${activeBucket.label}</span> → <span class="text-indigo-400">${activeBucket.male} Bay</span> • <span class="text-rose-400">${activeBucket.female} Bayan</span> (${activeBucket.total})`;
 
       const maxVal = Math.max(...buckets.map(b => b.total), 1);
 
@@ -1556,20 +1782,20 @@
             const isSelected = b.hour === selectedChartHour;
 
             const ringClass = isSelected
-              ? 'ring-2 ring-amber-400 bg-zinc-900'
+              ? 'ring-2 ring-emerald-400 bg-zinc-900'
               : 'bg-zinc-950/70 hover:bg-zinc-900';
 
             return `
               <button type="button" onclick="selectChartHour('${b.hour}')" class="flex flex-col items-center min-w-[50px] flex-1 p-1.5 rounded-xl transition tap-btn ${ringClass}">
-                <span class="text-[11px] font-black tabular-nums mb-1 ${isPeak ? 'text-amber-400' : 'text-zinc-200'}">${b.total}</span>
+                <span class="text-[11px] font-black tabular-nums mb-1 ${isPeak ? 'text-emerald-400' : 'text-zinc-200'}">${b.total}</span>
                 <div class="w-7 h-24 bg-zinc-900/90 rounded-lg overflow-hidden flex flex-col justify-end border border-zinc-800">
                   <div style="height: ${totalHeightPct}%" class="w-full flex flex-col justify-end transition-all duration-300">
                     ${b.female > 0 ? `<div style="height: ${femalePartPct}%" class="w-full bg-rose-500"></div>` : ''}
                     ${b.male > 0 ? `<div style="height: ${malePartPct}%" class="w-full bg-indigo-500"></div>` : ''}
                   </div>
                 </div>
-                <span class="text-[11px] font-bold tabular-nums mt-1.5 ${isSelected ? 'text-amber-400' : 'text-zinc-400'}">${b.hour}:00</span>
-                ${isPeak ? `<span class="text-[9px] font-extrabold text-amber-400 uppercase tracking-tighter">ZİRVE</span>` : `<span class="text-[9px] opacity-0">-</span>`}
+                <span class="text-[11px] font-bold tabular-nums mt-1.5 ${isSelected ? 'text-emerald-400' : 'text-zinc-400'}">${b.hour}:00</span>
+                ${isPeak ? `<span class="text-[9px] font-extrabold text-emerald-400 uppercase tracking-tighter">ZİRVE</span>` : `<span class="text-[9px] opacity-0">-</span>`}
               </button>
             `;
           }).join('')}
@@ -1579,6 +1805,7 @@
 
     // =========================================================
     // SEKME 4: VARDİYA ÖZETİ & WHATSAPP RAPORU KOPYALAMA
+    // ŞİŞE, VIP VE BİLETLİ GEÇİŞLER KAYIT / MASA ADEDİ (+1) SAYILIR
     // =========================================================
     function formatEntryTypeLower(type) {
       if (type === 'Şişe Servisi') return 'şişe servisi';
@@ -1587,19 +1814,25 @@
       return (type || '').toLocaleLowerCase('tr-TR');
     }
 
-    // İstenen kesin format: "Avcu Bey (Kaan Duralı 3 bay şişe servisi 18:00)"
     function formatGuestReportLine(entry) {
       const name = (entry.guestName || '').trim() || 'İsimsiz Misafir';
       const count = Number(entry.maleCount) || 1;
       const typeLower = formatEntryTypeLower(entry.entryType);
       const timeText = entry.time || '--:--';
-      return `${entry.staff} (${name} ${count} bay ${typeLower} ${timeText})`;
+      const notePart = entry.note ? ` - ${entry.note}` : '';
+      return `${entry.staff} (${name} ${count} bay ${typeLower} ${timeText}${notePart})`;
     }
 
     function calculateShiftBreakdown() {
-      let siseMale = 0, siseGroups = 0;
-      let vipMale = 0, vipGroups = 0;
-      let biletliMale = 0, biletliGroups = 0;
+      let siseRecordCount = 0;
+      let siseMaleHeadcount = 0;
+
+      let vipRecordCount = 0;
+      let vipMaleHeadcount = 0;
+
+      let biletliRecordCount = 0;
+      let biletliMaleHeadcount = 0;
+
       const staffMap = {};
 
       const chronological = [...state.entries].reverse().sort((a, b) => {
@@ -1608,39 +1841,52 @@
       });
 
       chronological.forEach(entry => {
-        const cnt = Number(entry.maleCount) || 0;
+        const guestHeadcount = Number(entry.maleCount) || 0;
+
         if (entry.entryType === 'Şişe Servisi') {
-          siseMale += cnt;
-          siseGroups++;
+          siseRecordCount += 1;
+          siseMaleHeadcount += guestHeadcount;
         } else if (entry.entryType === 'VIP Geçiş') {
-          vipMale += cnt;
-          vipGroups++;
+          vipRecordCount += 1;
+          vipMaleHeadcount += guestHeadcount;
         } else if (entry.entryType === 'Biletli Geçiş') {
-          biletliMale += cnt;
-          biletliGroups++;
+          biletliRecordCount += 1;
+          biletliMaleHeadcount += guestHeadcount;
         }
 
         if (!staffMap[entry.staff]) {
           staffMap[entry.staff] = {
             totalMale: 0,
-            siseMale: 0,
-            vipMale: 0,
-            biletliMale: 0,
-            groups: 0,
+            siseRecords: 0,
+            vipRecords: 0,
+            biletliRecords: 0,
+            totalRecords: 0,
             items: []
           };
         }
 
-        staffMap[entry.staff].totalMale += cnt;
-        staffMap[entry.staff].groups++;
+        staffMap[entry.staff].totalMale += guestHeadcount;
+        staffMap[entry.staff].totalRecords += 1;
         staffMap[entry.staff].items.push(entry);
 
-        if (entry.entryType === 'Şişe Servisi') staffMap[entry.staff].siseMale += cnt;
-        else if (entry.entryType === 'VIP Geçiş') staffMap[entry.staff].vipMale += cnt;
-        else if (entry.entryType === 'Biletli Geçiş') staffMap[entry.staff].biletliMale += cnt;
+        if (entry.entryType === 'Şişe Servisi') {
+          staffMap[entry.staff].siseRecords += 1;
+        } else if (entry.entryType === 'VIP Geçiş') {
+          staffMap[entry.staff].vipRecords += 1;
+        } else if (entry.entryType === 'Biletli Geçiş') {
+          staffMap[entry.staff].biletliRecords += 1;
+        }
       });
 
-      return { siseMale, siseGroups, vipMale, vipGroups, biletliMale, biletliGroups, staffMap };
+      return {
+        siseRecordCount,
+        siseMaleHeadcount,
+        vipRecordCount,
+        vipMaleHeadcount,
+        biletliRecordCount,
+        biletliMaleHeadcount,
+        staffMap
+      };
     }
 
     function renderShiftReport() {
@@ -1659,14 +1905,22 @@
       document.getElementById('rep-total-female').textContent = totalFemale;
       document.getElementById('rep-grand-total').textContent = grandTotal;
 
-      const { siseMale, siseGroups, vipMale, vipGroups, biletliMale, biletliGroups, staffMap } = calculateShiftBreakdown();
+      const {
+        siseRecordCount,
+        siseMaleHeadcount,
+        vipRecordCount,
+        vipMaleHeadcount,
+        biletliRecordCount,
+        biletliMaleHeadcount,
+        staffMap
+      } = calculateShiftBreakdown();
 
-      document.getElementById('rep-sise-male').textContent = `${siseMale} Bay`;
-      document.getElementById('rep-sise-groups').textContent = `${siseGroups} giriş`;
-      document.getElementById('rep-vip-male').textContent = `${vipMale} Bay`;
-      document.getElementById('rep-vip-groups').textContent = `${vipGroups} giriş`;
-      document.getElementById('rep-biletli-male').textContent = `${biletliMale} Bay`;
-      document.getElementById('rep-biletli-groups').textContent = `${biletliGroups} giriş`;
+      document.getElementById('rep-sise-count').textContent = `${siseRecordCount} Şişe`;
+      document.getElementById('rep-sise-male').textContent = `${siseMaleHeadcount} Bay`;
+      document.getElementById('rep-vip-count').textContent = `${vipRecordCount} VIP`;
+      document.getElementById('rep-vip-male').textContent = `${vipMaleHeadcount} Bay`;
+      document.getElementById('rep-biletli-count').textContent = `${biletliRecordCount} Bilet`;
+      document.getElementById('rep-biletli-male').textContent = `${biletliMaleHeadcount} Bay`;
 
       const staffContainer = document.getElementById('rep-staff-breakdown');
       const sortedStaff = Object.entries(staffMap).sort((a, b) => b[1].totalMale - a[1].totalMale);
@@ -1678,12 +1932,12 @@
 
       staffContainer.innerHTML = sortedStaff.map(([staffName, data]) => {
         const badges = [];
-        if (data.siseMale > 0) badges.push(`<span class="text-amber-400 font-bold">${data.siseMale} Şişe</span>`);
-        if (data.vipMale > 0) badges.push(`<span class="text-purple-400 font-bold">${data.vipMale} VIP</span>`);
-        if (data.biletliMale > 0) badges.push(`<span class="text-emerald-400 font-bold">${data.biletliMale} Biletli</span>`);
+        if (data.siseRecords > 0) badges.push(`<span class="text-amber-400 font-bold">${data.siseRecords} Şişe</span>`);
+        if (data.vipRecords > 0) badges.push(`<span class="text-purple-400 font-bold">${data.vipRecords} VIP</span>`);
+        if (data.biletliRecords > 0) badges.push(`<span class="text-cyan-400 font-bold">${data.biletliRecords} Bilet</span>`);
 
         const linesHtml = data.items.map(item => {
-          let dot = 'bg-emerald-400';
+          let dot = 'bg-cyan-400';
           if (item.entryType === 'Şişe Servisi') dot = 'bg-amber-400';
           else if (item.entryType === 'VIP Geçiş') dot = 'bg-purple-400';
 
@@ -1704,7 +1958,7 @@
               </div>
               <div class="text-right">
                 <div class="text-base font-black text-indigo-400 tabular-nums">${data.totalMale} Bay</div>
-                <div class="text-[10px] text-zinc-500">${data.groups} kayıt</div>
+                <div class="text-[10px] text-zinc-500">${data.totalRecords} kayıt</div>
               </div>
             </div>
             <div class="space-y-1.5">
@@ -1721,19 +1975,28 @@
       const grandTotal = totalMale + totalFemale;
       const dateStr = new Date().toLocaleDateString('tr-TR');
 
-      const { siseMale, siseGroups, vipMale, vipGroups, biletliMale, biletliGroups, staffMap } = calculateShiftBreakdown();
+      const {
+        siseRecordCount,
+        siseMaleHeadcount,
+        vipRecordCount,
+        vipMaleHeadcount,
+        biletliRecordCount,
+        biletliMaleHeadcount,
+        staffMap
+      } = calculateShiftBreakdown();
+
       const { buckets, peakBucket } = buildHourlyDensityData();
 
-      let report = `📊 *GECE SONU KAPI RAPORU (${dateStr})*\n\n`;
+      let report = `🐸 *FROG KAYIT — GECE SONU RAPORU (${dateStr})*\n\n`;
       report += `👥 *Genel Toplam:* ${grandTotal} Kişi\n`;
       report += `👨 *Toplam Bay:* ${totalMale}\n`;
       report += `👩 *Toplam Bayan:* ${totalFemale}\n\n`;
-      report += `🍾 *Toplam Şişe Servisi:* ${siseMale} Bay (${siseGroups} giriş)\n`;
-      report += `✨ *Toplam VIP Geçiş:* ${vipMale} Bay (${vipGroups} giriş)\n`;
-      report += `🎟️ *Toplam Biletli Geçiş:* ${biletliMale} Bay (${biletliGroups} giriş)\n`;
+      report += `🍾 *Toplam Şişe Servisi:* ${siseRecordCount} Şişe (${siseMaleHeadcount} Bay)\n`;
+      report += `✨ *Toplam VIP Geçiş:* ${vipRecordCount} VIP (${vipMaleHeadcount} Bay)\n`;
+      report += `🎟️ *Toplam Biletli Geçiş:* ${biletliRecordCount} Bilet (${biletliMaleHeadcount} Bay)\n`;
 
       if (buckets.length > 0) {
-        report += `\n⏱️ *SAATLİK YOĞUNLUK (Zirve: ${peakBucket.label} - ${peakBucket.total} kişi):*\n`;
+        report += `\n⏱️ *SAATLİK YOĞUNLUK (En Yoğun: ${peakBucket.label} - ${peakBucket.total} kişi):*\n`;
         buckets.forEach(b => {
           report += `• ${b.label}: ${b.total} kişi (${b.male} Bay, ${b.female} Bayan)\n`;
         });
@@ -1744,9 +2007,9 @@
         report += `\n📋 *REFERANS & MİSAFİR DETAYLARI:*\n`;
         sortedStaff.forEach(([staffName, d]) => {
           const parts = [];
-          if (d.siseMale > 0) parts.push(`${d.siseMale} Şişe`);
-          if (d.vipMale > 0) parts.push(`${d.vipMale} VIP`);
-          if (d.biletliMale > 0) parts.push(`${d.biletliMale} Biletli`);
+          if (d.siseRecords > 0) parts.push(`${d.siseRecords} Şişe`);
+          if (d.vipRecords > 0) parts.push(`${d.vipRecords} VIP`);
+          if (d.biletliRecords > 0) parts.push(`${d.biletliRecords} Bilet`);
 
           report += `\n📌 *${staffName}* — Toplam ${d.totalMale} Bay (${parts.join(', ')})\n`;
           d.items.forEach(item => {
@@ -1794,24 +2057,16 @@
     }
 
     // =========================================================
-    // PWA REHBERİ & SEKME GEÇİŞLERİ
+    // SEKME GEÇİŞLERİ
     // =========================================================
-    function openPwaModal() {
-      document.getElementById('pwa-modal').classList.remove('hidden');
-    }
-
-    function closePwaModal() {
-      document.getElementById('pwa-modal').classList.add('hidden');
-    }
-
     function switchTab(tabName) {
       ['entry', 'reservations', 'logs', 'report'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tabName);
         const navBtn = document.getElementById(`nav-${t}`);
         if (t === tabName) {
-          navBtn.className = 'nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-amber-400 bg-amber-500/10 relative';
+          navBtn.className = 'nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-emerald-400 bg-emerald-500/10 relative tap-btn';
         } else {
-          navBtn.className = 'nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative';
+          navBtn.className = 'nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn';
         }
       });
 
@@ -1837,7 +2092,11 @@
       document.getElementById('male-ratio-badge').textContent = `%${malePct}`;
       document.getElementById('female-ratio-badge').textContent = `%${femalePct}`;
 
-      // Bekleyen Rezervasyon Rozeti
+      const barMalePct = grandTotal > 0 ? malePct : 50;
+      const barFemalePct = grandTotal > 0 ? femalePct : 50;
+      document.getElementById('ratio-bar-male').style.width = `${barMalePct}%`;
+      document.getElementById('ratio-bar-female').style.width = `${barFemalePct}%`;
+
       const pendingCount = state.reservations.filter(r => r.status === 'pending').length;
       const resBadge = document.getElementById('nav-res-badge');
       if (pendingCount > 0) {
@@ -1847,7 +2106,6 @@
         resBadge.classList.add('hidden');
       }
 
-      // Gece Akışı Rozeti
       const logsBadge = document.getElementById('nav-logs-badge');
       if (state.entries.length > 0) {
         logsBadge.textContent = state.entries.length;
@@ -1884,8 +2142,15 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      const headerDate = document.getElementById('header-date-label');
+      if (headerDate) {
+        headerDate.textContent = new Date().toLocaleDateString('tr-TR', {
+          day: 'numeric', month: 'long', weekday: 'long'
+        });
+      }
       resetEntryTimeAuto();
-      setInterval(syncLiveEntryClock, 10000);
+      syncLiveEntryClock();
+      setInterval(syncLiveEntryClock, 5000);
       selectEntryCount(1);
       selectEntryType('Şişe Servisi');
       renderAll();
