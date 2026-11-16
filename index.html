@@ -90,6 +90,15 @@
       transform: scale(0.95);
     }
 
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shake 0.35s ease-in-out;
+    }
+
     input[type="time"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
       opacity: 0.8;
@@ -99,10 +108,10 @@
 <body class="antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
 
   <!-- ========================================================= -->
-  <!-- EKRAN 0: ROL BAZLI ERİŞİM KODU (PIN) GİRİŞ EKRANI         -->
+  <!-- EKRAN 0: ROL BAZLI ERİŞİM KODU (PIN) KİLİT EKRANI          -->
   <!-- ========================================================= -->
   <div id="auth-screen" class="fixed inset-0 z-50 bg-oled flex flex-col items-center justify-center p-5">
-    <div class="w-full max-w-sm bg-panel border border-zinc-800 rounded-3xl p-6 space-y-5 shadow-2xl">
+    <div id="auth-card" class="w-full max-w-sm bg-panel border border-zinc-800 rounded-3xl p-6 space-y-5 shadow-2xl">
       <div class="flex flex-col items-center text-center space-y-2">
         <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-lg shadow-emerald-500/20">
           <svg class="w-9 h-9 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
@@ -128,11 +137,6 @@
           <p id="pin-error-msg" class="hidden text-xs font-bold text-red-400 text-center mt-2">Hatalı erişim kodu. Lütfen tekrar deneyin.</p>
         </div>
 
-        <label class="flex items-center justify-center gap-2.5 cursor-pointer py-1">
-          <input type="checkbox" id="remember-pin-checkbox" checked class="w-4 h-4 rounded accent-emerald-400" />
-          <span class="text-xs font-semibold text-zinc-300">Bu cihazda oturumu hatırla</span>
-        </label>
-
         <button type="submit" class="w-full h-14 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition tap-btn">
           Giriş Yap
         </button>
@@ -155,7 +159,7 @@
     <header class="sticky top-0 z-30 bg-oled/95 backdrop-blur-xl border-b border-zinc-800/90 px-3.5 pt-2.5 pb-3 shadow-2xl">
       <div class="max-w-[480px] mx-auto space-y-2.5">
         
-        <!-- Üst Bar: Yalnızca Frog Kayıt Başlığı, Senkron Durumu, Saat ve Kilit -->
+        <!-- Üst Bar: Yalnızca Frog Kayıt Başlığı, Senkron Durumu & Saat -->
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2.5 min-w-0">
             <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-sm shadow-emerald-500/20 shrink-0">
@@ -164,36 +168,31 @@
               </svg>
             </div>
             <div class="truncate">
-              <div class="flex items-center gap-1.5">
-                <h1 class="text-base font-black tracking-tight text-white leading-none">Frog Kayıt</h1>
-                <span id="role-mode-badge" class="hidden text-[9px] font-black uppercase tracking-wider bg-sky-500/15 text-sky-300 border border-sky-400/30 px-1.5 py-0.5 rounded">İzleme</span>
-              </div>
+              <h1 class="text-base font-black tracking-tight text-white leading-none">Frog Kayıt</h1>
               <span id="header-date-label" class="text-[10px] font-semibold text-zinc-400 block mt-1">Kapı Operasyonu</span>
             </div>
           </div>
 
           <div class="flex items-center gap-1.5 shrink-0">
             <!-- Canlı Bağlantı Rozeti -->
-            <div id="sync-status-pill" class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 rounded-xl">
+            <div id="sync-status-pill" class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1.5 rounded-xl">
               <span id="sync-status-dot" class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
               <span id="sync-status-text" class="text-[9px] font-black uppercase tracking-wider text-amber-300">BAĞLANIYOR</span>
-              <span id="header-live-clock" class="text-[10px] font-black text-white tabular-nums pl-1 border-l border-zinc-700">--:--</span>
+              <span id="header-live-clock" class="text-[10px] font-black text-white tabular-nums pl-1.5 border-l border-zinc-700">--:--</span>
             </div>
-
-            <!-- Küçük Kilit / Çıkış Butonu -->
-            <button type="button" onclick="logoutSession()" title="Oturumu Kilitle / Mod Değiştir" aria-label="Oturumu Kilitle" class="w-8 h-8 rounded-xl bg-panel hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center tap-btn">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </button>
           </div>
         </div>
 
-        <!-- Müdür Salt Okunur Bilgilendirme Şeridi (Sadece Müdür Modunda Görünür) -->
-        <div id="manager-readonly-banner" class="hidden bg-sky-500/10 border border-sky-500/30 rounded-xl px-3 py-1.5 flex items-center justify-between">
-          <span class="text-[10px] font-black uppercase tracking-wider text-sky-300 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping"></span>
-            CANLI İZLEME MODU (SALT OKUNUR)
+        <!-- Müdür Salt Okunur Bilgilendirme Rozeti (Sadece Müdür Modunda Görünür) -->
+        <div id="manager-readonly-banner" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-1.5 flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-300 flex items-center gap-2">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            </span>
+            Canlı İzleme (Salt Okunur)
           </span>
-          <span class="text-[10px] font-semibold text-sky-200/80">Anlık Senkronize</span>
+          <span class="text-[10px] font-semibold text-emerald-200/80">Anlık Senkronize</span>
         </div>
 
         <!-- BAY & BAYAN Canlı Sayaç Kartları -->
@@ -234,9 +233,8 @@
         <!-- GENEL TOPLAM & ORAN BARI -->
         <div class="bg-panel border border-zinc-800/90 rounded-2xl px-3.5 py-2 flex items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <span class="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">TOPLAM İÇERİDEKİ</span>
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">TOPLAM KİŞİ</span>
             <span id="grand-total-display" class="text-lg font-black text-emerald-400 tabular-nums">0</span>
-            <span class="text-[11px] font-semibold text-zinc-500">Kişi</span>
           </div>
           <div class="flex items-center gap-2 flex-1 max-w-[150px]">
             <div class="w-full h-2 bg-zinc-900 rounded-full overflow-hidden flex border border-zinc-800">
@@ -250,19 +248,19 @@
     </header>
 
     <!-- ======================================================= -->
-    <!-- ANA İÇERİK ALANI (3 SEKME)                              -->
+    <!-- ANA İÇERİK ALANI (4 SEKME)                              -->
     <!-- ======================================================= -->
     <main class="max-w-[480px] mx-auto px-3.5 pt-4 space-y-4">
 
       <!-- ===================================================== -->
-      <!-- SEKME 1: GİRİŞ & AKIŞ                                 -->
+      <!-- SEKME 1: KAPI AKIŞI (HIZLI GİRİŞ & CANLI LİSTE)       -->
       <!-- ===================================================== -->
       <section id="tab-entry" class="space-y-4">
         
         <!-- Hızlı Bay Giriş Formu (Sadece Kapı Modunda Görünür) -->
         <div class="door-only bg-panel border border-zinc-800 rounded-3xl p-4 space-y-4 shadow-xl">
           <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
-            <h2 class="text-sm font-extrabold uppercase tracking-wider text-white">Bay Misafir Giriş Kaydı</h2>
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-white">Bay Girişi Kaydı</h2>
             <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">Hızlı Form</span>
           </div>
 
@@ -297,17 +295,19 @@
             <div id="entry-staff-pills" class="flex flex-wrap gap-2"></div>
           </div>
 
-          <!-- 3. Kaç Bay? (1 - 4) -->
+          <!-- 3. Kaç Bay? (1 - 6) -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label class="text-xs font-bold uppercase tracking-wider text-zinc-400">3. Kaç Bay?</label>
               <span id="entry-count-label" class="text-xs font-bold text-indigo-400">1 Bay Seçili</span>
             </div>
-            <div class="grid grid-cols-4 gap-2">
+            <div class="grid grid-cols-6 gap-1.5">
               <button type="button" data-ecount="1" onclick="selectEntryCount(1)" class="entry-count-btn h-12 rounded-2xl font-extrabold text-base border transition tap-btn">1</button>
               <button type="button" data-ecount="2" onclick="selectEntryCount(2)" class="entry-count-btn h-12 rounded-2xl font-extrabold text-base border transition tap-btn">2</button>
               <button type="button" data-ecount="3" onclick="selectEntryCount(3)" class="entry-count-btn h-12 rounded-2xl font-extrabold text-base border transition tap-btn">3</button>
               <button type="button" data-ecount="4" onclick="selectEntryCount(4)" class="entry-count-btn h-12 rounded-2xl font-extrabold text-base border transition tap-btn">4</button>
+              <button type="button" data-ecount="5" onclick="selectEntryCount(5)" class="entry-count-btn h-12 rounded-2xl font-extrabold text-base border transition tap-btn">5</button>
+              <button type="button" data-ecount="6" onclick="selectEntryCount(6)" class="entry-count-btn h-12 rounded-2xl font-extrabold text-base border transition tap-btn">6</button>
             </div>
           </div>
 
@@ -331,7 +331,7 @@
           <div class="grid grid-cols-5 gap-2.5">
             <div class="col-span-2">
               <div class="flex items-center justify-between mb-1">
-                <label for="entry-time" class="text-xs font-bold uppercase tracking-wider text-zinc-400">5. Giriş Saati</label>
+                <label for="entry-time" class="text-xs font-bold uppercase tracking-wider text-zinc-400">5. Saat</label>
                 <button type="button" onclick="resetEntryTimeAuto()" class="text-[10px] font-bold text-emerald-400 hover:underline tap-btn">Şu An</button>
               </div>
               <input
@@ -360,10 +360,10 @@
           </button>
         </div>
 
-        <!-- Canlı Gece Akışı (Hem Kapı Hem Müdür Görür) -->
+        <!-- Canlı Kapı Akışı (Hem Kapı Hem Müdür Görür) -->
         <div class="space-y-2.5 pt-1">
           <div class="flex items-center justify-between px-1">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-300">Canlı Gece Akışı</h3>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-300">Kapı Akışı</h3>
             <span id="logs-total-count-label" class="text-xs font-bold text-zinc-400">0 kayıt</span>
           </div>
 
@@ -392,18 +392,60 @@
       </section>
 
       <!-- ===================================================== -->
-      <!-- SEKME 2: REZERVASYONLAR                               -->
+      <!-- SEKME 2: REZERVASYON                                  -->
       <!-- ===================================================== -->
       <section id="tab-reservations" class="hidden space-y-4">
-        <!-- Rezervasyon Ekleme Butonları (Sadece Kapı Modunda Görünür) -->
-        <div class="door-only grid grid-cols-2 gap-2.5">
-          <button type="button" onclick="openNewResModal()" class="h-12 bg-emerald-400 hover:bg-emerald-300 text-zinc-950 font-extrabold text-xs rounded-2xl px-3 flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/15 tap-btn">
+        
+        <!-- Yeni Rezervasyon Ekleme Formu (Sadece Kapı Modunda Görünür) -->
+        <div class="door-only bg-panel border border-zinc-800 rounded-3xl p-4 space-y-3.5 shadow-xl">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-white">Yeni Rezervasyon Ekle</h2>
+            <button type="button" onclick="openBulkResModal()" class="text-[11px] font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-xl tap-btn">
+              Toplu Yapıştır
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Misafir Adı</label>
+              <input type="text" id="res-form-name" placeholder="Örn: Mert Yılmaz" autocomplete="off" class="w-full h-11 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-xl px-3 text-sm text-white placeholder-zinc-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Referans</label>
+              <select id="res-form-staff" class="w-full h-11 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-xl px-3 text-xs font-bold text-white focus:outline-none"></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Bay Sayısı</label>
+              <select id="res-form-count" class="w-full h-11 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-xl px-3 text-xs font-bold text-white focus:outline-none">
+                <option value="1">1 Bay</option>
+                <option value="2">2 Bay</option>
+                <option value="3">3 Bay</option>
+                <option value="4">4 Bay</option>
+                <option value="5">5 Bay</option>
+                <option value="6">6 Bay</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Giriş Türü</label>
+              <select id="res-form-type" class="w-full h-11 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-xl px-3 text-xs font-bold text-white focus:outline-none">
+                <option value="Şişe Servisi">🍾 Şişe Servisi</option>
+                <option value="VIP Geçiş">✨ VIP Geçiş</option>
+                <option value="Biletli Geçiş">🎟️ Biletli Geçiş</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Not / Masa No (Opsiyonel)</label>
+            <input type="text" id="res-form-note" placeholder="Örn: Loca 2, 00:30 giriş" autocomplete="off" class="w-full h-11 bg-surface border border-zinc-700 focus:border-emerald-400 rounded-xl px-3 text-sm text-white placeholder-zinc-500 focus:outline-none" />
+          </div>
+
+          <button type="button" onclick="submitInlineReservation()" class="w-full h-12 bg-emerald-400 hover:bg-emerald-300 text-zinc-950 font-black text-sm rounded-2xl shadow-lg shadow-emerald-500/15 flex items-center justify-center gap-1.5 tap-btn">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
             Rezervasyon Ekle
-          </button>
-          <button type="button" onclick="openBulkResModal()" class="h-12 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 font-extrabold text-xs rounded-2xl px-3 flex items-center justify-center gap-1.5 tap-btn">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-            Toplu Yapıştır (WhatsApp)
           </button>
         </div>
 
@@ -445,19 +487,17 @@
       </section>
 
       <!-- ===================================================== -->
-      <!-- SEKME 3: VARDİYA ÖZETİ & SAATLİK YOĞUNLUK GRAFİĞİ     -->
+      <!-- SEKME 3: YOĞUNLUK (SAATLİK TRAFİK GRAFİĞİ)            -->
       <!-- ===================================================== -->
-      <section id="tab-report" class="hidden space-y-4 pb-8">
-
-        <!-- 1. SAATLİK YOĞUNLUK GRAFİĞİ -->
-        <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-3 shadow-xl">
+      <section id="tab-density" class="hidden space-y-4 pb-6">
+        <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-3.5 shadow-xl">
           <div class="flex items-start justify-between gap-2 border-b border-zinc-800 pb-3">
             <div>
               <h2 class="text-sm font-extrabold uppercase tracking-wider text-white">Saatlik Yoğunluk Grafiği</h2>
-              <p class="text-[11px] text-zinc-400 mt-0.5">Tüm girişler (Bay formları, Rezervasyon & +1/-1 Bay/Bayan)</p>
+              <p class="text-[11px] text-zinc-400 mt-0.5">Hızlı sayaçlar, bay formları ve içeri alınan rezervasyonlar</p>
             </div>
             <div class="text-right shrink-0">
-              <span class="text-[10px] font-bold uppercase text-zinc-400 block">En Yoğun Saat</span>
+              <span class="text-[10px] font-bold uppercase text-zinc-400 block">Zirve Saati</span>
               <span id="peak-hour-badge" class="inline-block mt-0.5 text-xs font-black text-emerald-400 bg-emerald-400/15 border border-emerald-400/30 px-2.5 py-0.5 rounded-lg">--:--</span>
             </div>
           </div>
@@ -477,7 +517,17 @@
           <div id="hourly-chart-container" class="bg-surface/90 border border-zinc-800/90 rounded-2xl p-3"></div>
         </div>
 
-        <!-- 2. VARDİYA ÖZETİ & REFERANS DETAYLARI -->
+        <!-- Saatlik Detay Tablosu -->
+        <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-2.5 shadow-xl">
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">Saat Dilimi Dökümü</h3>
+          <div id="hourly-breakdown-list" class="space-y-2"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- SEKME 4: VARDİYA ÖZETİ & RAPOR                        -->
+      <!-- ===================================================== -->
+      <section id="tab-report" class="hidden space-y-4 pb-8">
         <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-4 shadow-xl">
           <div class="border-b border-zinc-800 pb-3">
             <h2 class="text-base font-extrabold text-white">Vardiya Özeti</h2>
@@ -500,7 +550,7 @@
             </div>
           </div>
 
-          <!-- Giriş Türü Dağılımı (Kayıt / Masa Adedi Olarak) -->
+          <!-- Giriş Türü Dağılımı (KAYIT / MASA ADEDİ OLARAK SAYILIR) -->
           <div class="grid grid-cols-3 gap-2">
             <div class="bg-surface border border-amber-500/25 rounded-2xl p-2.5">
               <div class="text-[11px] font-bold text-amber-400 truncate">Şişe Servisi</div>
@@ -531,11 +581,16 @@
             WhatsApp Raporunu Kopyala
           </button>
 
-          <!-- Yeni Gece Başlat Butonu (YALNIZCA Kapı Modunda ve Vardiya Özeti sekmesinin en altında) -->
-          <div class="door-only pt-4 border-t border-zinc-800/90">
-            <button type="button" onclick="openResetModal()" class="w-full h-12 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-extrabold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
+          <!-- Alt Yönetim Alanı: Yeni Gece Başlat (Sadece Kapı) + Çıkış / Rol Değiştir (Herkes) -->
+          <div class="pt-4 border-t border-zinc-800/90 space-y-2.5">
+            <button type="button" onclick="openResetModal()" class="door-only w-full h-12 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-extrabold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              Yeni Gece Başlat (Vardiyayı Sıfırla)
+              Yeni Gece Başlat
+            </button>
+
+            <button type="button" onclick="logoutSession()" class="w-full h-11 bg-surface hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 font-bold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              Çıkış / Rol Değiştir
             </button>
           </div>
         </div>
@@ -544,25 +599,30 @@
     </main>
 
     <!-- ======================================================= -->
-    <!-- ALT NAVİGASYON BARI (3 SEKME)                           -->
+    <!-- ALT NAVİGASYON BARI (4 SEKME)                           -->
     <!-- ======================================================= -->
-    <nav class="fixed bottom-0 inset-x-0 z-30 bg-oled/95 backdrop-blur-xl border-t border-zinc-800 px-3 pt-2" style="padding-bottom: max(12px, env(safe-area-inset-bottom));">
-      <div class="max-w-[480px] mx-auto grid grid-cols-3 gap-1.5">
+    <nav class="fixed bottom-0 inset-x-0 z-30 bg-oled/95 backdrop-blur-xl border-t border-zinc-800 px-2.5 pt-2" style="padding-bottom: max(12px, env(safe-area-inset-bottom));">
+      <div class="max-w-[480px] mx-auto grid grid-cols-4 gap-1">
         <button type="button" onclick="switchTab('entry')" id="nav-entry" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-emerald-400 bg-emerald-500/10 relative tap-btn">
           <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <span class="text-[11px] font-bold">Giriş & Akış</span>
-          <span id="nav-logs-badge" class="hidden absolute top-1 right-4 bg-indigo-500 text-white text-[10px] font-black px-1.5 rounded-full">0</span>
+          <span class="text-[10px] font-bold">Kapı Akışı</span>
+          <span id="nav-logs-badge" class="hidden absolute top-1 right-2.5 bg-indigo-500 text-white text-[9px] font-black px-1.5 rounded-full">0</span>
         </button>
 
         <button type="button" onclick="switchTab('reservations')" id="nav-reservations" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn">
           <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-          <span class="text-[11px] font-bold">Rezervasyonlar</span>
-          <span id="nav-res-badge" class="hidden absolute top-1 right-4 bg-amber-400 text-zinc-950 text-[10px] font-black px-1.5 rounded-full">0</span>
+          <span class="text-[10px] font-bold">Rezervasyon</span>
+          <span id="nav-res-badge" class="hidden absolute top-1 right-2.5 bg-amber-400 text-zinc-950 text-[9px] font-black px-1.5 rounded-full">0</span>
+        </button>
+
+        <button type="button" onclick="switchTab('density')" id="nav-density" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn">
+          <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+          <span class="text-[10px] font-bold">Yoğunluk</span>
         </button>
 
         <button type="button" onclick="switchTab('report')" id="nav-report" class="nav-tab min-h-[48px] flex flex-col items-center justify-center py-1.5 rounded-2xl text-zinc-400 hover:text-zinc-200 relative tap-btn">
           <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-          <span class="text-[11px] font-bold">Vardiya Özeti</span>
+          <span class="text-[10px] font-bold">Vardiya Özeti</span>
         </button>
       </div>
     </nav>
@@ -570,63 +630,7 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 1: YENİ REZERVASYON EKLE                            -->
-  <!-- ========================================================= -->
-  <div id="new-res-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
-    <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-        <h3 class="text-base font-extrabold text-white">Yeni Rezervasyon Ekle</h3>
-        <button type="button" onclick="closeNewResModal()" class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white tap-btn">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-bold text-zinc-400 mb-1">Misafir Adı</label>
-          <input type="text" id="mres-name" placeholder="Örn: Mert Yılmaz" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-4 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400" />
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-zinc-400 mb-1">Referans / Çalışan</label>
-          <select id="mres-staff" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-white font-semibold focus:outline-none focus:border-emerald-400"></select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2.5">
-          <div>
-            <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı (1-4)</label>
-            <div class="grid grid-cols-4 gap-1">
-              <button type="button" data-mrescount="1" onclick="selectModalResCount(1)" class="mres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">1</button>
-              <button type="button" data-mrescount="2" onclick="selectModalResCount(2)" class="mres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">2</button>
-              <button type="button" data-mrescount="3" onclick="selectModalResCount(3)" class="mres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">3</button>
-              <button type="button" data-mrescount="4" onclick="selectModalResCount(4)" class="mres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">4</button>
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Türü</label>
-            <select id="mres-type" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-emerald-400">
-              <option value="Şişe Servisi">Şişe Servisi</option>
-              <option value="VIP Geçiş">VIP Geçiş</option>
-              <option value="Biletli Geçiş">Biletli Geçiş</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-zinc-400 mb-1">Not / Masa No (Opsiyonel)</label>
-          <input type="text" id="mres-note" placeholder="Örn: Loca 2, saat 00:30" class="w-full h-11 bg-surface border border-zinc-700 rounded-2xl px-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400" />
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="closeNewResModal()" class="h-12 bg-zinc-800 text-zinc-300 font-bold rounded-2xl text-sm tap-btn">Vazgeç</button>
-        <button type="button" onclick="submitNewReservation()" class="h-12 bg-emerald-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Listeye Ekle</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================= -->
-  <!-- MODAL 1B: REZERVASYON DÜZENLEME & NOT EKLEME              -->
+  <!-- MODAL 1: REZERVASYON DÜZENLEME & NOT EKLEME              -->
   <!-- ========================================================= -->
   <div id="edit-res-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
     <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
@@ -655,13 +659,15 @@
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı (1-4)</label>
-            <div class="grid grid-cols-4 gap-1">
-              <button type="button" data-erescount="1" onclick="selectEditResCount(1)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">1</button>
-              <button type="button" data-erescount="2" onclick="selectEditResCount(2)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">2</button>
-              <button type="button" data-erescount="3" onclick="selectEditResCount(3)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">3</button>
-              <button type="button" data-erescount="4" onclick="selectEditResCount(4)" class="eres-count-btn h-11 rounded-xl font-extrabold text-sm border tap-btn">4</button>
-            </div>
+            <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı</label>
+            <select id="eres-count" class="w-full h-11 bg-surface border border-zinc-700 rounded-xl px-3 text-xs font-bold text-white focus:outline-none focus:border-emerald-400">
+              <option value="1">1 Bay</option>
+              <option value="2">2 Bay</option>
+              <option value="3">3 Bay</option>
+              <option value="4">4 Bay</option>
+              <option value="5">5 Bay</option>
+              <option value="6">6 Bay</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-zinc-400 mb-1">Giriş Türü</label>
@@ -681,7 +687,7 @@
 
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="deleteResFromModal()" class="h-12 bg-red-500/15 border border-red-500/30 text-red-400 font-bold rounded-2xl text-sm tap-btn">Rezervasyonu Sil</button>
-        <button type="button" onclick="saveEditedReservation()" class="h-12 bg-emerald-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Değişiklikleri Kaydet</button>
+        <button type="button" onclick="saveEditedReservation()" class="h-12 bg-emerald-400 text-zinc-950 font-black rounded-2xl text-sm tap-btn">Kaydet</button>
       </div>
     </div>
   </div>
@@ -724,7 +730,6 @@
           placeholder="Örn:&#10;Kaan Duralı 3 bay&#10;Mert Yılmaz 2 bay&#10;Emre Kaya"
           class="w-full bg-surface border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-400"
         ></textarea>
-        <p class="text-[11px] text-zinc-500 mt-1">Satır içinde "2 bay", "3 kişi" gibi 1-4 arası sayı yazıyorsa otomatik algılanır.</p>
       </div>
 
       <div class="grid grid-cols-2 gap-2">
@@ -768,7 +773,7 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 4: KAYIT DÜZENLEME (GECE AKIŞI)                     -->
+  <!-- MODAL 4: KAYIT DÜZENLEME (KAPI AKIŞI)                     -->
   <!-- ========================================================= -->
   <div id="edit-entry-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
     <div class="bg-panel border border-zinc-800 w-full max-w-md rounded-3xl p-5 space-y-4 shadow-2xl">
@@ -800,12 +805,14 @@
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı (1-4)</label>
+            <label class="block text-xs font-bold text-zinc-400 mb-1">Bay Sayısı</label>
             <select id="edit-entry-count" class="w-full h-12 bg-surface border border-zinc-700 rounded-2xl px-3 text-white font-bold focus:outline-none focus:border-emerald-400">
               <option value="1">1 Bay</option>
               <option value="2">2 Bay</option>
               <option value="3">3 Bay</option>
               <option value="4">4 Bay</option>
+              <option value="5">5 Bay</option>
+              <option value="6">6 Bay</option>
             </select>
           </div>
           <div>
@@ -866,16 +873,16 @@
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
     // =========================================================
-    // FIREBASE YAPILANDIRMASI (BELÇİKA / EUROPE-WEST1 RTDB)
+    // FIREBASE YAPILANDIRMASI (EUROPE-WEST1 REALTIME DATABASE)
     // =========================================================
     const firebaseConfig = {
       apiKey: "AIzaSyB_G0Vv6dM24NBwBpkYoHucL8HtS1NOCSI",
       authDomain: "frog-kayit-d1e58.firebaseapp.com",
+      databaseURL: "https://frog-kayit-d1e58-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "frog-kayit-d1e58",
       storageBucket: "frog-kayit-d1e58.firebasestorage.app",
       messagingSenderId: "687138161424",
-      appId: "1:687138161424:web:cfeb4cb79da49ad889db95",
-      databaseURL: "https://frog-kayit-d1e58-default-rtdb.europe-west1.firebasedatabase.app"
+      appId: "1:687138161424:web:cfeb4cb79da49ad889db95"
     };
 
     let db = null;
@@ -885,7 +892,7 @@
     try {
       const app = initializeApp(firebaseConfig);
       db = getDatabase(app);
-      activeShiftRef = ref(db, "frog_kayit/active_shift");
+      activeShiftRef = ref(db, "shifts/active_shift");
       connectedRef = ref(db, ".info/connected");
     } catch (e) {
       console.error("Firebase başlatma hatası:", e);
@@ -912,17 +919,18 @@
     }, { passive: false });
 
     // =========================================================
-    // ROL BAZLI YETKİLENDİRME (1415 = KAPI, frog123 = MÜDÜR)
+    // ROL BAZLI ERİŞİM KONTROLÜ ('1415' = door, 'frog123' = manager)
     // =========================================================
-    const ROLE_STORAGE_KEY = 'frog_kayit_session_role_v1';
-    const STORAGE_KEY = 'frog_kayit_live_cache_v1';
+    const ROLE_STORAGE_KEY = 'frog_kayit_role';
+    const LOCAL_CACHE_KEY = 'frog_kayit_active_shift_cache';
     const DOOR_PIN = '1415';
     const MANAGER_PIN = 'frog123';
 
     let currentRole = null; // 'door' | 'manager'
 
     function getSavedRole() {
-      return localStorage.getItem(ROLE_STORAGE_KEY) || sessionStorage.getItem(ROLE_STORAGE_KEY) || null;
+      const r = localStorage.getItem(ROLE_STORAGE_KEY);
+      return (r === 'door' || r === 'manager') ? r : null;
     }
 
     function applyRoleUI(role) {
@@ -931,16 +939,12 @@
       document.getElementById('app-shell').classList.remove('hidden');
 
       const isManager = role === 'manager';
-      const roleBadge = document.getElementById('role-mode-badge');
       const managerBanner = document.getElementById('manager-readonly-banner');
 
       if (isManager) {
-        roleBadge.textContent = 'MÜDÜR İZLEME';
-        roleBadge.classList.remove('hidden');
         managerBanner.classList.remove('hidden');
         document.querySelectorAll('.door-only').forEach(el => el.classList.add('hidden'));
       } else {
-        roleBadge.classList.add('hidden');
         managerBanner.classList.add('hidden');
         document.querySelectorAll('.door-only').forEach(el => el.classList.remove('hidden'));
       }
@@ -952,7 +956,7 @@
       if (e) e.preventDefault();
       const input = document.getElementById('pin-input');
       const errMsg = document.getElementById('pin-error-msg');
-      const remember = document.getElementById('remember-pin-checkbox').checked;
+      const card = document.getElementById('auth-card');
       const code = (input.value || '').trim().toLowerCase();
 
       let matchedRole = null;
@@ -964,6 +968,9 @@
 
       if (!matchedRole) {
         errMsg.classList.remove('hidden');
+        card.classList.remove('animate-shake');
+        void card.offsetWidth;
+        card.classList.add('animate-shake');
         input.value = '';
         input.focus();
         return;
@@ -971,14 +978,7 @@
 
       errMsg.classList.add('hidden');
       input.value = '';
-
-      if (remember) {
-        localStorage.setItem(ROLE_STORAGE_KEY, matchedRole);
-        sessionStorage.removeItem(ROLE_STORAGE_KEY);
-      } else {
-        sessionStorage.setItem(ROLE_STORAGE_KEY, matchedRole);
-        localStorage.removeItem(ROLE_STORAGE_KEY);
-      }
+      localStorage.setItem(ROLE_STORAGE_KEY, matchedRole);
 
       applyRoleUI(matchedRole);
       showToast(matchedRole === 'door' ? 'Kapı Operasyon Modu Açıldı' : 'Müdür Canlı İzleme Modu Açıldı');
@@ -986,7 +986,6 @@
 
     window.logoutSession = function () {
       localStorage.removeItem(ROLE_STORAGE_KEY);
-      sessionStorage.removeItem(ROLE_STORAGE_KEY);
       currentRole = null;
       document.getElementById('app-shell').classList.add('hidden');
       document.getElementById('auth-screen').classList.remove('hidden');
@@ -999,44 +998,56 @@
     // =========================================================
     const DEFAULT_STATE = {
       staffList: ['Avcu Bey', 'İşletme', 'Kapı'],
+      bayCount: 0,
+      bayanCount: 0,
+      quickBayCount: 0,
       entries: [],          // { id, guestName, staff, maleCount, entryType, time, note, timestamp, fromReservationId? }
       reservations: [],     // { id, guestName, staff, maleCount, entryType, note, status: 'pending'|'checked_in', checkinTime?, linkedEntryId?, createdAt }
-      quickMaleEvents: [],  // { id, hour: '23', timestamp }
-      femaleEvents: [],     // { id, hour: '23', timestamp }
+      hourlyStats: {},      // { "23": { bay: 4, bayan: 6 }, "00": { bay: 12, bayan: 10 } }
+      shiftStart: new Date().toISOString(),
       updatedAt: 0
     };
 
+    function recalculateDerivedFields(st) {
+      const entriesMale = st.entries.reduce((sum, e) => sum + (Number(e.maleCount) || 0), 0);
+      st.quickBayCount = Math.max(0, Number(st.quickBayCount) || 0);
+      st.bayCount = entriesMale + st.quickBayCount;
+      st.bayanCount = Math.max(0, Number(st.bayanCount) || 0);
+      return st;
+    }
+
     function normalizeState(rawObj) {
       if (!rawObj || typeof rawObj !== 'object') return structuredClone(DEFAULT_STATE);
-      return {
+      const st = {
         staffList: Array.isArray(rawObj.staffList) && rawObj.staffList.length > 0
           ? rawObj.staffList
           : [...DEFAULT_STATE.staffList],
+        bayCount: Number(rawObj.bayCount) || 0,
+        bayanCount: Number(rawObj.bayanCount) || 0,
+        quickBayCount: Number(rawObj.quickBayCount) || 0,
         entries: Array.isArray(rawObj.entries)
           ? rawObj.entries.map(e => ({
               ...e,
-              maleCount: Math.min(4, Math.max(1, Number(e.maleCount) || 1))
+              maleCount: Math.max(1, Number(e.maleCount) || 1)
             }))
           : [],
         reservations: Array.isArray(rawObj.reservations)
           ? rawObj.reservations.map(r => ({
               ...r,
-              maleCount: Math.min(4, Math.max(1, Number(r.maleCount) || 1)),
+              maleCount: Math.max(1, Number(r.maleCount) || 1),
               status: r.status === 'checked_in' ? 'checked_in' : 'pending'
             }))
           : [],
-        quickMaleEvents: Array.isArray(rawObj.quickMaleEvents) ? rawObj.quickMaleEvents : [],
-        femaleEvents: Array.isArray(rawObj.femaleEvents) ? rawObj.femaleEvents : [],
+        hourlyStats: (rawObj.hourlyStats && typeof rawObj.hourlyStats === 'object') ? rawObj.hourlyStats : {},
+        shiftStart: rawObj.shiftStart || new Date().toISOString(),
         updatedAt: Number(rawObj.updatedAt) || 0
       };
+      return recalculateDerivedFields(st);
     }
 
     function loadLocalCache() {
       try {
-        const raw =
-          localStorage.getItem(STORAGE_KEY) ||
-          localStorage.getItem('frog_kayit_v36') ||
-          localStorage.getItem('frog_kayit_v35');
+        const raw = localStorage.getItem(LOCAL_CACHE_KEY);
         if (!raw) return structuredClone(DEFAULT_STATE);
         return normalizeState(JSON.parse(raw));
       } catch (err) {
@@ -1048,53 +1059,46 @@
     let selectedEntryStaff = state.staffList[0] || '';
     let selectedEntryCount = 1;
     let selectedEntryType = 'Şişe Servisi';
-    let selectedModalResCount = 1;
-    let selectedEditResCount = 1;
     let currentLogFilter = 'ALL';
     let isEntryTimeManual = false;
     let selectedChartHour = null;
-    let isFirebaseConnected = false;
 
     function updateConnectionUI(connected) {
-      isFirebaseConnected = connected;
       const pill = document.getElementById('sync-status-pill');
       const dot = document.getElementById('sync-status-dot');
       const txt = document.getElementById('sync-status-text');
       if (!pill || !dot || !txt) return;
 
       if (connected) {
-        pill.className = 'flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2 py-1.5 rounded-xl';
+        pill.className = 'flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1.5 rounded-xl';
         dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
         txt.className = 'text-[9px] font-black uppercase tracking-wider text-emerald-400';
         txt.textContent = 'CANLI • SENKRON';
       } else {
-        pill.className = 'flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 rounded-xl';
+        pill.className = 'flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1.5 rounded-xl';
         dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400';
         txt.className = 'text-[9px] font-black uppercase tracking-wider text-amber-300';
         txt.textContent = 'ÇEVRİMDIŞI YEDEK';
       }
     }
 
-    function saveState() {
-      // Sadece Kapı Modu ('door') veritabanına yazabilir
+    function persistAndSync() {
       if (currentRole !== 'door') {
         showToast('Salt okunur izleme modunda değişiklik yapılamaz');
         return;
       }
 
+      recalculateDerivedFields(state);
       state.updatedAt = Date.now();
 
-      // 1. Çevrimdışı koruma için önce yerel önbelleğe yaz
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(state));
       } catch (err) {
-        console.error('Local cache hatası:', err);
+        console.error('LocalStorage hatası:', err);
       }
 
-      // 2. Arayüzü anında güncelle
       renderAll();
 
-      // 3. Firebase Realtime Database'e canlı gönder
       if (activeShiftRef) {
         set(activeShiftRef, state).catch(err => {
           console.error('Firebase yazma hatası:', err);
@@ -1103,12 +1107,11 @@
       }
     }
 
-    // Firebase Bağlantı ve Canlı Veri Dinleyicileri
+    // Firebase Realtime Database Canlı Dinleyicileri
     if (connectedRef && activeShiftRef) {
       onValue(connectedRef, (snap) => {
         const connected = snap.val() === true;
         updateConnectionUI(connected);
-        // İnternet geri geldiğinde kapı cihazındaki güncel veriyi buluta aktar
         if (connected && currentRole === 'door' && state.updatedAt > 0) {
           set(activeShiftRef, state).catch(() => {});
         }
@@ -1117,16 +1120,14 @@
       onValue(activeShiftRef, (snapshot) => {
         const remoteData = snapshot.val();
         if (remoteData) {
-          const normalized = normalizeState(remoteData);
-          state = normalized;
+          state = normalizeState(remoteData);
           try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(state));
           } catch (e) {}
           if (currentRole) {
             renderAll();
           }
         } else if (currentRole === 'door' && state.updatedAt > 0) {
-          // Bulut boşsa ve yerel cihazda veri varsa ilk senkronizasyonu yap
           set(activeShiftRef, state).catch(() => {});
         }
       }, (error) => {
@@ -1175,57 +1176,48 @@
       if (el) el.value = getCurrentHHMM();
     };
 
+    function bumpHourlyStat(hourStr, genderKey, delta) {
+      const h = String(hourStr).padStart(2, '0');
+      if (!state.hourlyStats[h]) {
+        state.hourlyStats[h] = { bay: 0, bayan: 0 };
+      }
+      state.hourlyStats[h][genderKey] = Math.max(0, (Number(state.hourlyStats[h][genderKey]) || 0) + delta);
+    }
+
     // =========================================================
-    // ÜST SAYAÇLAR (BAY & BAYAN) + SAATLİK YOĞUNLUK KAYDI
+    // ÜST SAYAÇLAR (BAY & BAYAN)
     // =========================================================
-    function getQuickMaleTotal() {
-      return state.quickMaleEvents.length;
-    }
-
-    function getEntriesMaleTotal() {
-      return state.entries.reduce((sum, e) => sum + (Number(e.maleCount) || 0), 0);
-    }
-
-    function getTotalMaleCount() {
-      return getEntriesMaleTotal() + getQuickMaleTotal();
-    }
-
-    function getTotalFemaleCount() {
-      return state.femaleEvents.length;
-    }
-
     window.adjustQuickMale = function (delta) {
       if (currentRole !== 'door') return;
       if (delta > 0) {
-        state.quickMaleEvents.push({
-          id: 'qm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
-          hour: getCurrentHourStr(),
-          timestamp: Date.now()
-        });
-        saveState();
+        state.quickBayCount += 1;
+        bumpHourlyStat(getCurrentHourStr(), 'bay', 1);
+        persistAndSync();
       } else if (delta < 0) {
-        if (state.quickMaleEvents.length === 0) {
+        if (state.quickBayCount <= 0) {
           showToast('Hızlı bay sayacı 0');
           return;
         }
-        state.quickMaleEvents.pop();
-        saveState();
+        state.quickBayCount -= 1;
+        bumpHourlyStat(getCurrentHourStr(), 'bay', -1);
+        persistAndSync();
       }
     };
 
     window.adjustQuickFemale = function (delta) {
       if (currentRole !== 'door') return;
       if (delta > 0) {
-        state.femaleEvents.push({
-          id: 'qf_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
-          hour: getCurrentHourStr(),
-          timestamp: Date.now()
-        });
-        saveState();
+        state.bayanCount += 1;
+        bumpHourlyStat(getCurrentHourStr(), 'bayan', 1);
+        persistAndSync();
       } else if (delta < 0) {
-        if (state.femaleEvents.length === 0) return;
-        state.femaleEvents.pop();
-        saveState();
+        if (state.bayanCount <= 0) {
+          showToast('Bayan sayacı 0');
+          return;
+        }
+        state.bayanCount -= 1;
+        bumpHourlyStat(getCurrentHourStr(), 'bayan', -1);
+        persistAndSync();
       }
     };
 
@@ -1234,11 +1226,21 @@
     // =========================================================
     function renderEntryStaffPills() {
       const container = document.getElementById('entry-staff-pills');
-      if (!container) return;
+      const resFormSel = document.getElementById('res-form-staff');
+
       if (!state.staffList.includes(selectedEntryStaff)) {
         selectedEntryStaff = state.staffList[0] || '';
       }
 
+      if (resFormSel) {
+        const prev = resFormSel.value;
+        const list = state.staffList.length > 0 ? state.staffList : ['Belirtilmedi'];
+        resFormSel.innerHTML = list.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+        if (list.includes(prev)) resFormSel.value = prev;
+        else if (selectedEntryStaff) resFormSel.value = selectedEntryStaff;
+      }
+
+      if (!container) return;
       if (state.staffList.length === 0) {
         container.innerHTML = `<button type="button" onclick="openStaffModal()" class="text-xs font-bold text-emerald-400 underline py-2 tap-btn">+ Önce referans / çalışan ekleyin</button>`;
         return;
@@ -1302,7 +1304,7 @@
       state.staffList.push(val);
       selectedEntryStaff = val;
       input.value = '';
-      saveState();
+      persistAndSync();
       renderStaffModalList();
       showToast(`${val} listeye eklendi`);
     };
@@ -1312,12 +1314,12 @@
       const removed = state.staffList[idx];
       state.staffList.splice(idx, 1);
       if (selectedEntryStaff === removed) selectedEntryStaff = state.staffList[0] || '';
-      saveState();
+      persistAndSync();
       renderStaffModalList();
     };
 
     // =========================================================
-    // SEKME 1: HIZLI GİRİŞ FORMU İŞLEMLERİ
+    // SEKME 1: HIZLI BAY GİRİŞ FORMU
     // =========================================================
     window.clearEntryGuestInput = function () {
       const input = document.getElementById('entry-guest-name');
@@ -1326,7 +1328,7 @@
     };
 
     window.selectEntryCount = function (count) {
-      selectedEntryCount = Math.min(4, Math.max(1, Number(count) || 1));
+      selectedEntryCount = Math.max(1, Number(count) || 1);
       document.getElementById('entry-count-label').textContent = `${selectedEntryCount} Bay Seçili`;
 
       document.querySelectorAll('.entry-count-btn').forEach(btn => {
@@ -1371,7 +1373,7 @@
       const staff = selectedEntryStaff || state.staffList[0] || 'Belirtilmedi';
 
       if (!guestName) {
-        showToast('Lütfen bay misafir adını yazın');
+        showToast('Lütfen misafir adını yazın');
         nameInput.focus();
         return;
       }
@@ -1388,50 +1390,23 @@
       };
 
       state.entries.unshift(newEntry);
+      bumpHourlyStat(extractHourStr(timeVal), 'bay', newEntry.maleCount);
 
       nameInput.value = '';
       noteInput.value = '';
       selectEntryCount(1);
       resetEntryTimeAuto();
 
-      saveState();
+      persistAndSync();
       showToast(`${guestName} (${newEntry.maleCount} Bay) eklendi`);
     };
 
     // =========================================================
-    // SEKME 2: REZERVASYON LİSTESİ (EKLE, DÜZENLE, TOPLU, İÇERİ AL)
+    // SEKME 2: REZERVASYON YÖNETİMİ
     // =========================================================
-    window.openNewResModal = function () {
+    window.submitInlineReservation = function () {
       if (currentRole !== 'door') return;
-      const staffSel = document.getElementById('mres-staff');
-      const list = state.staffList.length > 0 ? state.staffList : ['Belirtilmedi'];
-      staffSel.innerHTML = list.map(s => `<option value="${escapeHtml(s)}" ${s === selectedEntryStaff ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
-      document.getElementById('mres-name').value = '';
-      document.getElementById('mres-note').value = '';
-      selectModalResCount(1);
-      document.getElementById('new-res-modal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('mres-name').focus(), 100);
-    };
-
-    window.closeNewResModal = function () {
-      document.getElementById('new-res-modal').classList.add('hidden');
-    };
-
-    window.selectModalResCount = function (count) {
-      selectedModalResCount = Math.min(4, Math.max(1, Number(count) || 1));
-      document.querySelectorAll('.mres-count-btn').forEach(btn => {
-        const val = Number(btn.dataset.mrescount);
-        if (val === selectedModalResCount) {
-          btn.className = 'mres-count-btn h-11 rounded-xl font-extrabold text-sm border border-indigo-400 bg-indigo-500/20 text-indigo-300 tap-btn';
-        } else {
-          btn.className = 'mres-count-btn h-11 rounded-xl font-extrabold text-sm border border-zinc-800 bg-surface text-zinc-400 tap-btn';
-        }
-      });
-    };
-
-    window.submitNewReservation = function () {
-      if (currentRole !== 'door') return;
-      const nameInput = document.getElementById('mres-name');
+      const nameInput = document.getElementById('res-form-name');
       const guestName = nameInput.value.trim();
       if (!guestName) {
         showToast('Lütfen misafir adını yazın');
@@ -1439,36 +1414,28 @@
         return;
       }
 
-      const staff = document.getElementById('mres-staff').value || 'Belirtilmedi';
-      const entryType = document.getElementById('mres-type').value || 'Şişe Servisi';
-      const note = document.getElementById('mres-note').value.trim();
+      const staff = document.getElementById('res-form-staff').value || 'Belirtilmedi';
+      const maleCount = Math.max(1, parseInt(document.getElementById('res-form-count').value, 10) || 1);
+      const entryType = document.getElementById('res-form-type').value || 'Şişe Servisi';
+      const note = document.getElementById('res-form-note').value.trim();
 
       state.reservations.unshift({
         id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         guestName,
         staff,
-        maleCount: selectedModalResCount,
+        maleCount,
         entryType,
         note,
         status: 'pending',
         createdAt: Date.now()
       });
 
-      closeNewResModal();
-      saveState();
-      showToast(`${guestName} rezervasyonlara eklendi`);
-    };
+      nameInput.value = '';
+      document.getElementById('res-form-note').value = '';
+      document.getElementById('res-form-count').value = '1';
 
-    window.selectEditResCount = function (count) {
-      selectedEditResCount = Math.min(4, Math.max(1, Number(count) || 1));
-      document.querySelectorAll('.eres-count-btn').forEach(btn => {
-        const val = Number(btn.dataset.erescount);
-        if (val === selectedEditResCount) {
-          btn.className = 'eres-count-btn h-11 rounded-xl font-extrabold text-sm border border-indigo-400 bg-indigo-500/20 text-indigo-300 tap-btn';
-        } else {
-          btn.className = 'eres-count-btn h-11 rounded-xl font-extrabold text-sm border border-zinc-800 bg-surface text-zinc-400 tap-btn';
-        }
-      });
+      persistAndSync();
+      showToast(`${guestName} rezervasyonlara eklendi`);
     };
 
     window.openEditResModal = function (resId) {
@@ -1478,12 +1445,13 @@
 
       document.getElementById('eres-id').value = res.id;
       document.getElementById('eres-name').value = res.guestName;
+      document.getElementById('eres-count').value = String(res.maleCount || 1);
       document.getElementById('eres-type').value = res.entryType || 'Şişe Servisi';
       document.getElementById('eres-note').value = res.note || '';
 
       const hint = document.getElementById('eres-status-hint');
       if (res.status === 'checked_in') {
-        hint.textContent = 'İçeri alınmış kayıt — değişiklikler Gece Akışı & Rapora yansır';
+        hint.textContent = 'İçeri alınmış kayıt — değişiklikler Kapı Akışı & Rapora yansır';
         hint.className = 'text-[11px] text-emerald-400 mt-0.5 font-semibold';
       } else {
         hint.textContent = 'Bekleyen rezervasyon bilgilerini veya notunu güncelleyin';
@@ -1494,7 +1462,6 @@
       const opts = Array.from(new Set([...state.staffList, res.staff]));
       staffSel.innerHTML = opts.map(s => `<option value="${escapeHtml(s)}" ${s === res.staff ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
 
-      selectEditResCount(res.maleCount || 1);
       document.getElementById('edit-res-modal').classList.remove('hidden');
     };
 
@@ -1515,14 +1482,16 @@
       }
 
       const staff = document.getElementById('eres-staff').value || 'Belirtilmedi';
+      const newCount = Math.max(1, parseInt(document.getElementById('eres-count').value, 10) || 1);
       const entryType = document.getElementById('eres-type').value || 'Şişe Servisi';
       const note = document.getElementById('eres-note').value.trim();
 
+      const oldRes = state.reservations[idx];
       const updatedRes = {
-        ...state.reservations[idx],
+        ...oldRes,
         guestName: name,
         staff,
-        maleCount: selectedEditResCount,
+        maleCount: newCount,
         entryType,
         note
       };
@@ -1531,11 +1500,16 @@
       if (updatedRes.status === 'checked_in' && updatedRes.linkedEntryId) {
         const eIdx = state.entries.findIndex(e => e.id === updatedRes.linkedEntryId);
         if (eIdx !== -1) {
+          const oldEntry = state.entries[eIdx];
+          const countDiff = newCount - (Number(oldEntry.maleCount) || 0);
+          if (countDiff !== 0) {
+            bumpHourlyStat(extractHourStr(oldEntry.time), 'bay', countDiff);
+          }
           state.entries[eIdx] = {
-            ...state.entries[eIdx],
+            ...oldEntry,
             guestName: name,
             staff,
-            maleCount: selectedEditResCount,
+            maleCount: newCount,
             entryType,
             note
           };
@@ -1543,7 +1517,7 @@
       }
 
       closeEditResModal();
-      saveState();
+      persistAndSync();
       showToast('Rezervasyon güncellendi');
     };
 
@@ -1586,7 +1560,7 @@
       lines.reverse().forEach((line, idx) => {
         let count = 1;
         let cleanName = line;
-        const match = line.match(/(?:\b|\+)([1-4])\s*(?:bay|kişi|kisi|pax)?\b/i);
+        const match = line.match(/(?:\b|\+)([1-6])\s*(?:bay|kişi|kisi|pax)?\b/i);
         if (match) {
           count = parseInt(match[1], 10);
           cleanName = line.replace(match[0], '').replace(/[-–()]+$/, '').trim() || line;
@@ -1605,7 +1579,7 @@
       });
 
       closeBulkResModal();
-      saveState();
+      persistAndSync();
       showToast(`${lines.length} rezervasyon aktarıldı`);
     };
 
@@ -1632,6 +1606,8 @@
         fromReservationId: res.id
       });
 
+      bumpHourlyStat(extractHourStr(nowTime), 'bay', res.maleCount);
+
       state.reservations[idx] = {
         ...res,
         status: 'checked_in',
@@ -1639,7 +1615,7 @@
         linkedEntryId: entryId
       };
 
-      saveState();
+      persistAndSync();
       showToast(`${res.guestName} (${res.maleCount} Bay) içeri alındı • ${nowTime}`);
     };
 
@@ -1650,6 +1626,10 @@
 
       const res = state.reservations[idx];
       if (res.linkedEntryId) {
+        const linked = state.entries.find(e => e.id === res.linkedEntryId);
+        if (linked) {
+          bumpHourlyStat(extractHourStr(linked.time), 'bay', -(Number(linked.maleCount) || 0));
+        }
         state.entries = state.entries.filter(e => e.id !== res.linkedEntryId);
       }
 
@@ -1660,7 +1640,7 @@
         linkedEntryId: null
       };
 
-      saveState();
+      persistAndSync();
       showToast(`${res.guestName} tekrar bekleyenlere alındı`);
     };
 
@@ -1668,10 +1648,14 @@
       if (currentRole !== 'door') return;
       const target = state.reservations.find(r => r.id === resId);
       if (target && target.status === 'checked_in' && target.linkedEntryId) {
+        const linked = state.entries.find(e => e.id === target.linkedEntryId);
+        if (linked) {
+          bumpHourlyStat(extractHourStr(linked.time), 'bay', -(Number(linked.maleCount) || 0));
+        }
         state.entries = state.entries.filter(e => e.id !== target.linkedEntryId);
       }
       state.reservations = state.reservations.filter(r => r.id !== resId);
-      saveState();
+      persistAndSync();
       showToast('Rezervasyon silindi');
     };
 
@@ -1786,7 +1770,7 @@
     };
 
     // =========================================================
-    // GECE AKIŞI & DÜZENLEME
+    // KAPI AKIŞI & DÜZENLEME
     // =========================================================
     function getEntryTypeBadgeClass(type) {
       if (type === 'Şişe Servisi') return 'bg-amber-500/15 text-amber-300 border-amber-500/30';
@@ -1873,19 +1857,22 @@
     window.deleteEntryById = function (id) {
       if (currentRole !== 'door') return;
       const target = state.entries.find(e => e.id === id);
-      if (target && target.fromReservationId) {
-        const rIdx = state.reservations.findIndex(r => r.id === target.fromReservationId);
-        if (rIdx !== -1) {
-          state.reservations[rIdx] = {
-            ...state.reservations[rIdx],
-            status: 'pending',
-            checkinTime: null,
-            linkedEntryId: null
-          };
+      if (target) {
+        bumpHourlyStat(extractHourStr(target.time), 'bay', -(Number(target.maleCount) || 0));
+        if (target.fromReservationId) {
+          const rIdx = state.reservations.findIndex(r => r.id === target.fromReservationId);
+          if (rIdx !== -1) {
+            state.reservations[rIdx] = {
+              ...state.reservations[rIdx],
+              status: 'pending',
+              checkinTime: null,
+              linkedEntryId: null
+            };
+          }
         }
       }
       state.entries = state.entries.filter(e => e.id !== id);
-      saveState();
+      persistAndSync();
       showToast('Kayıt silindi');
     };
 
@@ -1897,7 +1884,7 @@
       document.getElementById('edit-entry-id').value = entry.id;
       document.getElementById('edit-entry-name').value = entry.guestName;
       document.getElementById('edit-entry-time').value = entry.time;
-      document.getElementById('edit-entry-count').value = String(Math.min(4, Math.max(1, Number(entry.maleCount) || 1)));
+      document.getElementById('edit-entry-count').value = String(Math.max(1, Number(entry.maleCount) || 1));
       document.getElementById('edit-entry-type').value = entry.entryType;
       document.getElementById('edit-entry-note').value = entry.note || '';
 
@@ -1924,14 +1911,18 @@
         return;
       }
 
-      const count = Math.min(4, Math.max(1, parseInt(document.getElementById('edit-entry-count').value, 10) || 1));
+      const oldEntry = state.entries[idx];
+      const count = Math.max(1, parseInt(document.getElementById('edit-entry-count').value, 10) || 1);
       const staff = document.getElementById('edit-entry-staff').value;
       const time = document.getElementById('edit-entry-time').value || '00:00';
       const entryType = document.getElementById('edit-entry-type').value;
       const note = document.getElementById('edit-entry-note').value.trim();
 
+      bumpHourlyStat(extractHourStr(oldEntry.time), 'bay', -(Number(oldEntry.maleCount) || 0));
+      bumpHourlyStat(extractHourStr(time), 'bay', count);
+
       state.entries[idx] = {
-        ...state.entries[idx],
+        ...oldEntry,
         guestName: name,
         staff,
         time,
@@ -1940,8 +1931,8 @@
         note
       };
 
-      if (state.entries[idx].fromReservationId) {
-        const rIdx = state.reservations.findIndex(r => r.id === state.entries[idx].fromReservationId);
+      if (oldEntry.fromReservationId) {
+        const rIdx = state.reservations.findIndex(r => r.id === oldEntry.fromReservationId);
         if (rIdx !== -1) {
           state.reservations[rIdx] = {
             ...state.reservations[rIdx],
@@ -1956,7 +1947,7 @@
       }
 
       closeEditEntryModal();
-      saveState();
+      persistAndSync();
       showToast('Kayıt güncellendi');
     };
 
@@ -1967,41 +1958,22 @@
     };
 
     // =========================================================
-    // SAATLİK YOĞUNLUK HESAPLAMA & GRAFİK RENDER
+    // SEKME 3: SAATLİK YOĞUNLUK HESAPLAMA & GRAFİK RENDER
     // =========================================================
     function buildHourlyDensityData() {
-      const map = {};
-
-      const ensureHour = (h) => {
-        const key = String(h).padStart(2, '0');
-        if (!map[key]) map[key] = { hour: key, male: 0, female: 0, total: 0 };
-        return map[key];
-      };
-
-      state.entries.forEach(entry => {
-        const h = extractHourStr(entry.time);
-        const bucket = ensureHour(h);
-        bucket.male += Number(entry.maleCount) || 0;
-      });
-
-      state.quickMaleEvents.forEach(ev => {
-        const bucket = ensureHour(ev.hour);
-        bucket.male += 1;
-      });
-
-      state.femaleEvents.forEach(ev => {
-        const bucket = ensureHour(ev.hour);
-        bucket.female += 1;
-      });
-
-      const buckets = Object.values(map)
-        .map(b => ({
-          hour: b.hour,
-          label: `${b.hour}:00`,
-          male: Math.max(0, b.male),
-          female: Math.max(0, b.female),
-          total: Math.max(0, b.male) + Math.max(0, b.female)
-        }))
+      const buckets = Object.entries(state.hourlyStats || {})
+        .map(([hourKey, vals]) => {
+          const hour = String(hourKey).padStart(2, '0');
+          const male = Math.max(0, Number(vals?.bay) || 0);
+          const female = Math.max(0, Number(vals?.bayan) || 0);
+          return {
+            hour,
+            label: `${hour}:00`,
+            male,
+            female,
+            total: male + female
+          };
+        })
         .filter(b => b.total > 0);
 
       const nightOrderValue = (hStr) => {
@@ -2028,6 +2000,7 @@
 
     function renderHourlyDensityChart() {
       const container = document.getElementById('hourly-chart-container');
+      const listContainer = document.getElementById('hourly-breakdown-list');
       const peakBadge = document.getElementById('peak-hour-badge');
       const infoLabel = document.getElementById('selected-bar-info');
 
@@ -2038,9 +2011,12 @@
         infoLabel.textContent = 'Henüz giriş verisi yok';
         container.innerHTML = `
           <div class="py-8 text-center text-xs text-zinc-500">
-            Kapıdan giriş yapıldıkça (Bay formları, Rezervasyon veya +1 Bay / +1 Bayan) saatlik yoğunluk grafiği canlı olarak burada oluşur.
+            Kapıdan giriş yapıldıkça saatlik yoğunluk grafiği canlı olarak burada oluşur.
           </div>
         `;
+        if (listContainer) {
+          listContainer.innerHTML = `<div class="text-xs text-zinc-500 text-center py-4">Henüz saatlik hareket yok.</div>`;
+        }
         return;
       }
 
@@ -2084,10 +2060,29 @@
           }).join('')}
         </div>
       `;
+
+      if (listContainer) {
+        listContainer.innerHTML = buckets.map(b => {
+          const isPeak = b.hour === peakBucket.hour;
+          return `
+            <div class="flex items-center justify-between bg-surface border ${isPeak ? 'border-emerald-500/40' : 'border-zinc-800'} rounded-xl px-3.5 py-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-black text-white tabular-nums">${b.label}</span>
+                ${isPeak ? `<span class="text-[9px] font-black uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded">Zirve</span>` : ''}
+              </div>
+              <div class="flex items-center gap-3 text-xs font-bold tabular-nums">
+                <span class="text-indigo-400">${b.male} Bay</span>
+                <span class="text-rose-400">${b.female} Bayan</span>
+                <span class="text-white font-black bg-oled px-2 py-0.5 rounded-lg border border-zinc-800">${b.total} Kişi</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
     // =========================================================
-    // VARDİYA ÖZETİ & WHATSAPP RAPORU KOPYALAMA
+    // SEKME 4: VARDİYA ÖZETİ & WHATSAPP RAPORU (KAYIT/MASA ADEDİ)
     // =========================================================
     function formatEntryTypeLower(type) {
       if (type === 'Şişe Servisi') return 'şişe servisi';
@@ -2172,15 +2167,13 @@
     }
 
     function renderShiftReport() {
-      renderHourlyDensityChart();
-
       const now = new Date();
       document.getElementById('report-date-subtitle').textContent = now.toLocaleDateString('tr-TR', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      const totalMale = getTotalMaleCount();
-      const totalFemale = getTotalFemaleCount();
+      const totalMale = state.bayCount;
+      const totalFemale = state.bayanCount;
       const grandTotal = totalMale + totalFemale;
 
       document.getElementById('rep-total-male').textContent = totalMale;
@@ -2252,8 +2245,8 @@
     }
 
     window.copyEndOfNightReport = function () {
-      const totalMale = getTotalMaleCount();
-      const totalFemale = getTotalFemaleCount();
+      const totalMale = state.bayCount;
+      const totalFemale = state.bayanCount;
       const grandTotal = totalMale + totalFemale;
       const dateStr = new Date().toLocaleDateString('tr-TR');
 
@@ -2329,22 +2322,25 @@
 
     window.confirmResetNight = function () {
       if (currentRole !== 'door') return;
+      state.bayCount = 0;
+      state.bayanCount = 0;
+      state.quickBayCount = 0;
       state.entries = [];
       state.reservations = [];
-      state.quickMaleEvents = [];
-      state.femaleEvents = [];
+      state.hourlyStats = {};
+      state.shiftStart = new Date().toISOString();
       selectedChartHour = null;
       closeResetModal();
-      saveState();
+      persistAndSync();
       switchTab('entry');
       showToast('Yeni gece başlatıldı, sayaçlar sıfırlandı');
     };
 
     // =========================================================
-    // SEKME GEÇİŞLERİ
+    // SEKME GEÇİŞLERİ (4 SEKME)
     // =========================================================
     window.switchTab = function (tabName) {
-      ['entry', 'reservations', 'report'].forEach(t => {
+      ['entry', 'reservations', 'density', 'report'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tabName);
         const navBtn = document.getElementById(`nav-${t}`);
         if (t === tabName) {
@@ -2355,6 +2351,7 @@
       });
 
       if (tabName === 'reservations') renderReservations();
+      if (tabName === 'density') renderHourlyDensityChart();
       if (tabName === 'report') renderShiftReport();
     };
 
@@ -2362,8 +2359,8 @@
     // GENEL ARAYÜZ GÜNCELLEME & YARDIMCILAR
     // =========================================================
     function renderAll() {
-      const totalMale = getTotalMaleCount();
-      const totalFemale = getTotalFemaleCount();
+      const totalMale = state.bayCount;
+      const totalFemale = state.bayanCount;
       const grandTotal = totalMale + totalFemale;
 
       document.getElementById('total-male-display').textContent = totalMale;
@@ -2400,6 +2397,7 @@
       renderEntryStaffPills();
       renderLogs();
       renderReservations();
+      renderHourlyDensityChart();
       renderShiftReport();
     }
 
@@ -2438,7 +2436,7 @@
       selectEntryType('Şişe Servisi');
 
       const savedRole = getSavedRole();
-      if (savedRole === 'door' || savedRole === 'manager') {
+      if (savedRole) {
         applyRoleUI(savedRole);
       } else {
         setTimeout(() => document.getElementById('pin-input').focus(), 150);
