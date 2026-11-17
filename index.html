@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Frog Kayıt — Kapı & Canlı İzleme</title>
+  <title>Kapı Operasyon & Canlı İzleme</title>
 
   <!-- iOS Safari PWA & Ana Ekran İkonu -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Frog Kayıt" />
+  <meta name="apple-mobile-web-app-title" content="Kapı Kayıt" />
   <meta name="theme-color" content="#09090b" />
 
   <!-- Tailwind CSS -->
@@ -45,7 +45,6 @@
       box-sizing: border-box;
     }
 
-    /* Hızlı çift dokunuşta iOS Safari zoom ve sayfa yukarı/aşağı kaymasını kesin engelle */
     html, body, button, a, [role="button"] {
       touch-action: manipulation;
       -webkit-user-select: none;
@@ -108,23 +107,44 @@
 <body class="antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
 
   <!-- ========================================================= -->
-  <!-- EKRAN 0: ROL BAZLI ERİŞİM KODU (PIN) KİLİT EKRANI          -->
+  <!-- EKRAN 0: 3 SEÇENEKLİ GİRİŞ (FROG / INFERNO / MÜDÜR)       -->
   <!-- ========================================================= -->
   <div id="auth-screen" class="fixed inset-0 z-50 bg-oled flex flex-col items-center justify-center p-5">
     <div id="auth-card" class="w-full max-w-sm bg-panel border border-zinc-800 rounded-3xl p-6 space-y-5 shadow-2xl">
       <div class="flex flex-col items-center text-center space-y-2">
-        <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-          <svg class="w-9 h-9 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
+        <div id="auth-logo-box" class="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-lg shadow-emerald-500/20 transition-colors">
+          <svg id="auth-logo-icon" class="w-9 h-9 text-emerald-400 transition-colors" viewBox="0 0 24 24" fill="currentColor">
             <path d="M7.5 4A2.5 2.5 0 0 0 5 6.5c0 .7.29 1.33.76 1.78A7.98 7.98 0 0 0 4 13c0 3.87 3.58 7 8 7s8-3.13 8-7c0-1.8-.67-3.45-1.76-4.72.47-.45.76-1.08.76-1.78a2.5 2.5 0 0 0-4.88-.75 8.15 8.15 0 0 0-4.24 0A2.5 2.5 0 0 0 7.5 4Zm0 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm9 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM8.5 13.5c.85 1.15 2.1 1.75 3.5 1.75s2.65-.6 3.5-1.75a.75.75 0 1 1 1.2.9C15.55 15.95 13.9 16.75 12 16.75s-3.55-.8-4.7-2.35a.75.75 0 1 1 1.2-.9Z"/>
           </svg>
         </div>
-        <h1 class="text-xl font-black tracking-tight text-white">Frog Kayıt</h1>
-        <p class="text-xs text-zinc-400">Devam etmek için erişim kodunuzu girin</p>
+        <h1 class="text-xl font-black tracking-tight text-white">Kapı & Canlı İzleme</h1>
+        <p class="text-xs text-zinc-400">Giriş yapmak istediğiniz birimi seçin</p>
+      </div>
+
+      <!-- 3 Seçenekli Birim Seçici -->
+      <div class="grid grid-cols-3 gap-2">
+        <button type="button" id="login-opt-frog" onclick="selectLoginPortal('frog')" class="py-3 px-2 rounded-2xl border font-extrabold text-xs flex flex-col items-center justify-center gap-1.5 transition tap-btn bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-lg shadow-emerald-500/10">
+          <span class="text-lg leading-none">🐸</span>
+          <span>Frog</span>
+        </button>
+
+        <button type="button" id="login-opt-inferno" onclick="selectLoginPortal('inferno')" class="py-3 px-2 rounded-2xl border font-extrabold text-xs flex flex-col items-center justify-center gap-1.5 transition tap-btn bg-surface border-zinc-800 text-zinc-400 hover:border-zinc-700">
+          <span class="text-lg leading-none">🔥</span>
+          <span>Inferno</span>
+        </button>
+
+        <button type="button" id="login-opt-manager" onclick="selectLoginPortal('manager')" class="py-3 px-2 rounded-2xl border font-extrabold text-xs flex flex-col items-center justify-center gap-1.5 transition tap-btn bg-surface border-zinc-800 text-zinc-400 hover:border-zinc-700">
+          <span class="text-lg leading-none">👁️</span>
+          <span>Müdür</span>
+        </button>
       </div>
 
       <form onsubmit="handlePinLogin(event)" class="space-y-4">
         <div>
-          <label for="pin-input" class="block text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 mb-1.5">Erişim Kodu</label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="pin-input" class="block text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">Erişim Kodu</label>
+            <span id="selected-portal-hint" class="text-[11px] font-bold text-emerald-400">Frog Kapı Girişi</span>
+          </div>
           <input
             type="password"
             id="pin-input"
@@ -137,13 +157,13 @@
           <p id="pin-error-msg" class="hidden text-xs font-bold text-red-400 text-center mt-2">Hatalı erişim kodu. Lütfen tekrar deneyin.</p>
         </div>
 
-        <button type="submit" class="w-full h-14 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition tap-btn">
-          Giriş Yap
+        <button type="submit" id="login-submit-btn" class="w-full h-14 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition tap-btn">
+          Frog Kapısına Gir
         </button>
       </form>
 
       <div class="pt-2 border-t border-zinc-800/80 text-center text-[11px] text-zinc-500">
-        Kapı Operasyon & Canlı Yönetim İzleme Sistemi
+        Frog & Inferno Bağımsız Operasyon Sistemi
       </div>
     </div>
   </div>
@@ -154,21 +174,19 @@
   <div id="app-shell" class="hidden">
 
     <!-- ======================================================= -->
-    <!-- SABİT ÜST PANEL (SADE BAŞLIK, CANLI DURUM & SAYAÇLAR)   -->
+    <!-- SABİT ÜST PANEL (BAŞLIK, CANLI DURUM & SAYAÇLAR)        -->
     <!-- ======================================================= -->
     <header class="sticky top-0 z-30 bg-oled/95 backdrop-blur-xl border-b border-zinc-800/90 px-3.5 pt-2.5 pb-3 shadow-2xl">
       <div class="max-w-[480px] mx-auto space-y-2.5">
         
-        <!-- Üst Bar: Yalnızca Frog Kayıt Başlığı, Senkron Durumu & Saat -->
+        <!-- Üst Bar: Mekan Başlığı, Senkron Durumu & Saat -->
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-sm shadow-emerald-500/20 shrink-0">
-              <svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7.5 4A2.5 2.5 0 0 0 5 6.5c0 .7.29 1.33.76 1.78A7.98 7.98 0 0 0 4 13c0 3.87 3.58 7 8 7s8-3.13 8-7c0-1.8-.67-3.45-1.76-4.72.47-.45.76-1.08.76-1.78a2.5 2.5 0 0 0-4.88-.75 8.15 8.15 0 0 0-4.24 0A2.5 2.5 0 0 0 7.5 4Zm0 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm9 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM8.5 13.5c.85 1.15 2.1 1.75 3.5 1.75s2.65-.6 3.5-1.75a.75.75 0 1 1 1.2.9C15.55 15.95 13.9 16.75 12 16.75s-3.55-.8-4.7-2.35a.75.75 0 1 1 1.2-.9Z"/>
-              </svg>
+            <div id="header-badge-box" class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-sm shadow-emerald-500/20 shrink-0">
+              <span id="header-venue-emoji" class="text-lg leading-none">🐸</span>
             </div>
             <div class="truncate">
-              <h1 class="text-base font-black tracking-tight text-white leading-none">Frog Kayıt</h1>
+              <h1 id="header-venue-title" class="text-base font-black tracking-tight text-white leading-none">Frog Kayıt</h1>
               <span id="header-date-label" class="text-[10px] font-semibold text-zinc-400 block mt-1">Kapı Operasyonu</span>
             </div>
           </div>
@@ -183,16 +201,30 @@
           </div>
         </div>
 
-        <!-- Müdür Salt Okunur Bilgilendirme Rozeti (Sadece Müdür Modunda Görünür) -->
-        <div id="manager-readonly-banner" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-1.5 flex items-center justify-between">
-          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-300 flex items-center gap-2">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+        <!-- MÜDÜR CANLI KANAL SEÇİCİ & SALT OKUNUR UYARISI (Sadece Müdür Modunda Görünür) -->
+        <div id="manager-control-panel" class="hidden space-y-2">
+          <div class="bg-sky-500/10 border border-sky-500/30 rounded-xl px-3 py-1.5 flex items-center justify-between">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-300 flex items-center gap-2">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-400"></span>
+              </span>
+              Müdür Paneli (Salt Okunur)
             </span>
-            Canlı İzleme (Salt Okunur)
-          </span>
-          <span class="text-[10px] font-semibold text-emerald-200/80">Anlık Senkronize</span>
+            <span class="text-[10px] font-semibold text-sky-200/80">Müdahale Kapalı</span>
+          </div>
+
+          <!-- Frog / Inferno Canlı Geçiş Sekmeleri -->
+          <div class="grid grid-cols-2 gap-2 bg-panel p-1 rounded-2xl border border-zinc-800">
+            <button type="button" id="mgr-switch-frog" onclick="switchManagerVenue('frog')" class="py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition tap-btn bg-emerald-500/20 border border-emerald-400/50 text-emerald-300">
+              <span>🐸 Frog Canlı</span>
+              <span id="mgr-frog-mini-total" class="bg-emerald-500/25 text-emerald-200 px-1.5 py-0.5 rounded-md text-[10px] tabular-nums">0</span>
+            </button>
+            <button type="button" id="mgr-switch-inferno" onclick="switchManagerVenue('inferno')" class="py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition tap-btn text-zinc-400 hover:text-zinc-200 border border-transparent">
+              <span>🔥 Inferno Canlı</span>
+              <span id="mgr-inferno-mini-total" class="bg-zinc-800 text-zinc-300 px-1.5 py-0.5 rounded-md text-[10px] tabular-nums">0</span>
+            </button>
+          </div>
         </div>
 
         <!-- BAY & BAYAN Canlı Sayaç Kartları -->
@@ -314,17 +346,7 @@
           <!-- 4. Giriş Türü -->
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1.5">4. Giriş Türü</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button type="button" id="etype-sise" onclick="selectEntryType('Şişe Servisi')" class="etype-btn min-h-[54px] py-2.5 px-2 rounded-2xl border font-bold text-xs flex flex-col items-center justify-center gap-1 transition tap-btn">
-                <span>🍾 Şişe Servisi</span>
-              </button>
-              <button type="button" id="etype-vip" onclick="selectEntryType('VIP Geçiş')" class="etype-btn min-h-[54px] py-2.5 px-2 rounded-2xl border font-bold text-xs flex flex-col items-center justify-center gap-1 transition tap-btn">
-                <span>✨ VIP Geçiş</span>
-              </button>
-              <button type="button" id="etype-biletli" onclick="selectEntryType('Biletli Geçiş')" class="etype-btn min-h-[54px] py-2.5 px-2 rounded-2xl border font-bold text-xs flex flex-col items-center justify-center gap-1 transition tap-btn">
-                <span>🎟️ Biletli Geçiş</span>
-              </button>
-            </div>
+            <div id="entry-type-buttons-container" class="grid grid-cols-3 gap-2"></div>
           </div>
 
           <!-- 5. Giriş Saati & Opsiyonel Not -->
@@ -379,12 +401,7 @@
               />
             </div>
 
-            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-              <button type="button" onclick="setLogFilter('ALL')" id="lfilter-ALL" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap tap-btn">Tümü</button>
-              <button type="button" onclick="setLogFilter('Şişe Servisi')" id="lfilter-Şişe Servisi" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn">Şişe</button>
-              <button type="button" onclick="setLogFilter('VIP Geçiş')" id="lfilter-VIP Geçiş" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn">VIP</button>
-              <button type="button" onclick="setLogFilter('Biletli Geçiş')" id="lfilter-Biletli Geçiş" class="log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn">Biletli</button>
-            </div>
+            <div id="log-filter-buttons-container" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
           </div>
 
           <div id="all-logs-list" class="space-y-2.5 pb-4"></div>
@@ -530,7 +547,7 @@
       <section id="tab-report" class="hidden space-y-4 pb-8">
         <div class="bg-panel border border-zinc-800 rounded-3xl p-4 space-y-4 shadow-xl">
           <div class="border-b border-zinc-800 pb-3">
-            <h2 class="text-base font-extrabold text-white">Vardiya Özeti</h2>
+            <h2 id="report-venue-heading" class="text-base font-extrabold text-white">Vardiya Özeti</h2>
             <p id="report-date-subtitle" class="text-xs text-zinc-400 mt-0.5"></p>
           </div>
 
@@ -550,24 +567,8 @@
             </div>
           </div>
 
-          <!-- Giriş Türü Dağılımı (KAYIT / MASA ADEDİ OLARAK SAYILIR) -->
-          <div class="grid grid-cols-3 gap-2">
-            <div class="bg-surface border border-amber-500/25 rounded-2xl p-2.5">
-              <div class="text-[11px] font-bold text-amber-400 truncate">Şişe Servisi</div>
-              <div id="rep-sise-count" class="text-base font-black text-white tabular-nums mt-1">0 Şişe</div>
-              <div id="rep-sise-male" class="text-[11px] text-zinc-400">0 Bay</div>
-            </div>
-            <div class="bg-surface border border-purple-500/25 rounded-2xl p-2.5">
-              <div class="text-[11px] font-bold text-purple-400 truncate">VIP Geçiş</div>
-              <div id="rep-vip-count" class="text-base font-black text-white tabular-nums mt-1">0 VIP</div>
-              <div id="rep-vip-male" class="text-[11px] text-zinc-400">0 Bay</div>
-            </div>
-            <div class="bg-surface border border-cyan-500/25 rounded-2xl p-2.5">
-              <div class="text-[11px] font-bold text-cyan-400 truncate">Biletli Geçiş</div>
-              <div id="rep-biletli-count" class="text-base font-black text-white tabular-nums mt-1">0 Bilet</div>
-              <div id="rep-biletli-male" class="text-[11px] text-zinc-400">0 Bay</div>
-            </div>
-          </div>
+          <!-- Giriş Türü Dağılımı -->
+          <div id="rep-entry-type-summary" class="grid grid-cols-3 gap-2"></div>
 
           <!-- Referans Bazlı Misafir Detayları -->
           <div class="space-y-2.5">
@@ -581,7 +582,7 @@
             WhatsApp Raporunu Kopyala
           </button>
 
-          <!-- Alt Yönetim Alanı: Yeni Gece Başlat (Sadece Kapı) + Çıkış / Rol Değiştir (Herkes) -->
+          <!-- Alt Yönetim Alanı: Yeni Gece Başlat (Sadece Kapı) + Çıkış / Birim Değiştir (Herkes) -->
           <div class="pt-4 border-t border-zinc-800/90 space-y-2.5">
             <button type="button" onclick="openResetModal()" class="door-only w-full h-12 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-extrabold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -590,7 +591,7 @@
 
             <button type="button" onclick="logoutSession()" class="w-full h-11 bg-surface hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 font-bold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-              Çıkış / Rol Değiştir
+              Çıkış / Birim Değiştir
             </button>
           </div>
         </div>
@@ -848,7 +849,7 @@
       </div>
       <h3 class="text-lg font-extrabold text-white">Yeni Gece Başlatılsın mı?</h3>
       <p class="text-xs text-zinc-400 leading-relaxed">
-        Bay-bayan sayaçları, giriş kayıtları, rezervasyon listesi ve saatlik yoğunluk verileri sıfırlanır. <strong class="text-zinc-200">Referans / Çalışan listeniz korunur.</strong>
+        Sadece aktif kapının bay-bayan sayaçları, giriş kayıtları, rezervasyon listesi ve saatlik yoğunluk verileri sıfırlanır. <strong class="text-zinc-200">Referans / Çalışan listeniz korunur.</strong>
       </p>
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="closeResetModal()" class="h-12 bg-zinc-800 text-zinc-300 font-bold rounded-2xl text-sm tap-btn">Vazgeç</button>
@@ -866,7 +867,7 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- FIREBASE V10 MODÜLER SDK & UYGULAMA MANTIĞI              -->
+  <!-- FIREBASE V10 MODÜLER SDK & ÇOKLU MEKAN MANTIĞI            -->
   <!-- ========================================================= -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -886,13 +887,15 @@
     };
 
     let db = null;
-    let activeShiftRef = null;
+    let frogRef = null;
+    let infernoRef = null;
     let connectedRef = null;
 
     try {
       const app = initializeApp(firebaseConfig);
       db = getDatabase(app);
-      activeShiftRef = ref(db, "shifts/active_shift");
+      frogRef = ref(db, "shifts/frog");
+      infernoRef = ref(db, "shifts/inferno");
       connectedRef = ref(db, ".info/connected");
     } catch (e) {
       console.error("Firebase başlatma hatası:", e);
@@ -919,36 +922,304 @@
     }, { passive: false });
 
     // =========================================================
-    // ROL BAZLI ERİŞİM KONTROLÜ ('1415' = door, 'frog123' = manager)
+    // ROL & MEKAN ERİŞİM KONTROLÜ
+    // Frog ve Inferno Şifresi: '1415' | Müdür Şifresi: 'frog123'
     // =========================================================
-    const ROLE_STORAGE_KEY = 'frog_kayit_role';
-    const LOCAL_CACHE_KEY = 'frog_kayit_active_shift_cache';
+    const SESSION_STORAGE_KEY = 'kapi_kayit_session_v2';
     const DOOR_PIN = '1415';
     const MANAGER_PIN = 'frog123';
 
-    let currentRole = null; // 'door' | 'manager'
+    let selectedLoginPortal = 'frog'; // 'frog' | 'inferno' | 'manager'
+    let currentRole = null;           // 'door' | 'manager'
+    let activeVenue = 'frog';         // 'frog' | 'inferno'
 
-    function getSavedRole() {
-      const r = localStorage.getItem(ROLE_STORAGE_KEY);
-      return (r === 'door' || r === 'manager') ? r : null;
+    const VENUE_META = {
+      frog: {
+        title: 'Frog Kayıt',
+        emoji: '🐸',
+        badgeBoxClass: 'w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center shadow-sm shadow-emerald-500/20 shrink-0',
+        reportPrefix: '🐸 *FROG KAYIT'
+      },
+      inferno: {
+        title: 'Inferno Kayıt',
+        emoji: '🔥',
+        badgeBoxClass: 'w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-400/40 flex items-center justify-center shadow-sm shadow-orange-500/20 shrink-0',
+        reportPrefix: '🔥 *INFERNO KAYIT'
+      }
+    };
+
+    // =========================================================
+    // MEKANA ÖZEL GİRİŞ TİPLERİ VE YAPILANDIRMASI
+    // Frog: Şişe Servisi, VIP Geçiş, Biletli Geçiş
+    // Inferno: Şişe Servisi, VIP Geçiş, Kartlı Geçiş, Loca Servisi
+    // =========================================================
+    const VENUE_ENTRY_TYPES = {
+      frog: [
+        {
+          id: 'Şişe Servisi',
+          label: 'Şişe Servisi',
+          short: 'Şişe',
+          icon: '🍾',
+          badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          activeClass: 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-lg shadow-amber-500/10',
+          dotClass: 'bg-amber-400',
+          borderCardClass: 'border-amber-500/25',
+          statColor: 'text-amber-400',
+          unit: 'Şişe'
+        },
+        {
+          id: 'VIP Geçiş',
+          label: 'VIP Geçiş',
+          short: 'VIP',
+          icon: '✨',
+          badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+          activeClass: 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-lg shadow-purple-500/10',
+          dotClass: 'bg-purple-400',
+          borderCardClass: 'border-purple-500/25',
+          statColor: 'text-purple-400',
+          unit: 'VIP'
+        },
+        {
+          id: 'Biletli Geçiş',
+          label: 'Biletli Geçiş',
+          short: 'Biletli',
+          icon: '🎟️',
+          badgeClass: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+          activeClass: 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/10',
+          dotClass: 'bg-cyan-400',
+          borderCardClass: 'border-cyan-500/25',
+          statColor: 'text-cyan-400',
+          unit: 'Bilet'
+        }
+      ],
+      inferno: [
+        {
+          id: 'Şişe Servisi',
+          label: 'Şişe Servisi',
+          short: 'Şişe',
+          icon: '🍾',
+          badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+          activeClass: 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-lg shadow-amber-500/10',
+          dotClass: 'bg-amber-400',
+          borderCardClass: 'border-amber-500/25',
+          statColor: 'text-amber-400',
+          unit: 'Şişe'
+        },
+        {
+          id: 'VIP Geçiş',
+          label: 'VIP Geçiş',
+          short: 'VIP',
+          icon: '✨',
+          badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+          activeClass: 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-lg shadow-purple-500/10',
+          dotClass: 'bg-purple-400',
+          borderCardClass: 'border-purple-500/25',
+          statColor: 'text-purple-400',
+          unit: 'VIP'
+        },
+        {
+          id: 'Kartlı Geçiş',
+          label: 'Kartlı Geçiş',
+          short: 'Kartlı',
+          icon: '💳',
+          badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+          activeClass: 'bg-blue-500/20 border-blue-400 text-blue-300 shadow-lg shadow-blue-500/10',
+          dotClass: 'bg-blue-400',
+          borderCardClass: 'border-blue-500/25',
+          statColor: 'text-blue-400',
+          unit: 'Kartlı'
+        },
+        {
+          id: 'Loca Servisi',
+          label: 'Loca Servisi',
+          short: 'Loca',
+          icon: '🛋️',
+          badgeClass: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+          activeClass: 'bg-rose-500/20 border-rose-400 text-rose-300 shadow-lg shadow-rose-500/10',
+          dotClass: 'bg-rose-400',
+          borderCardClass: 'border-rose-500/25',
+          statColor: 'text-rose-400',
+          unit: 'Loca'
+        }
+      ]
+    };
+
+    function getVenueEntryTypes(venue = activeVenue) {
+      return VENUE_ENTRY_TYPES[venue] || VENUE_ENTRY_TYPES.frog;
     }
 
-    function applyRoleUI(role) {
+    function getEntryTypeMeta(type) {
+      const currentList = getVenueEntryTypes(activeVenue);
+      let found = currentList.find(t => t.id === type);
+      if (found) return found;
+
+      for (const vKey in VENUE_ENTRY_TYPES) {
+        found = VENUE_ENTRY_TYPES[vKey].find(t => t.id === type);
+        if (found) return found;
+      }
+
+      return {
+        id: type,
+        label: type,
+        short: type,
+        icon: '🏷️',
+        badgeClass: 'bg-zinc-500/15 text-zinc-300 border-zinc-500/30',
+        activeClass: 'bg-zinc-500/20 border-zinc-400 text-zinc-300',
+        dotClass: 'bg-zinc-400',
+        borderCardClass: 'border-zinc-500/25',
+        statColor: 'text-zinc-400',
+        unit: 'Kayıt'
+      };
+    }
+
+    function getEntryTypeBadgeClass(type) {
+      return getEntryTypeMeta(type).badgeClass;
+    }
+
+    function syncVenueEntryTypes() {
+      const currentTypes = getVenueEntryTypes(activeVenue);
+      if (!currentTypes.some(t => t.id === selectedEntryType)) {
+        selectedEntryType = currentTypes[0].id;
+      }
+      if (currentLogFilter !== 'ALL' && !currentTypes.some(t => t.id === currentLogFilter)) {
+        currentLogFilter = 'ALL';
+      }
+
+      const resFormTypeSel = document.getElementById('res-form-type');
+      if (resFormTypeSel) {
+        const cur = resFormTypeSel.value;
+        resFormTypeSel.innerHTML = currentTypes.map(t => `<option value="${escapeHtml(t.id)}">${t.icon} ${escapeHtml(t.label)}</option>`).join('');
+        if (currentTypes.some(t => t.id === cur)) {
+          resFormTypeSel.value = cur;
+        } else {
+          resFormTypeSel.value = currentTypes[0].id;
+        }
+      }
+
+      renderEntryTypeButtons();
+      renderLogFilterButtons();
+    }
+
+    window.selectLoginPortal = function (portal) {
+      selectedLoginPortal = portal;
+      const errMsg = document.getElementById('pin-error-msg');
+      errMsg.classList.add('hidden');
+
+      const btnFrog = document.getElementById('login-opt-frog');
+      const btnInferno = document.getElementById('login-opt-inferno');
+      const btnManager = document.getElementById('login-opt-manager');
+      const hint = document.getElementById('selected-portal-hint');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      const baseCls = 'py-3 px-2 rounded-2xl border font-extrabold text-xs flex flex-col items-center justify-center gap-1.5 transition tap-btn';
+      const inactiveCls = `${baseCls} bg-surface border-zinc-800 text-zinc-400 hover:border-zinc-700`;
+
+      btnFrog.className = portal === 'frog'
+        ? `${baseCls} bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-lg shadow-emerald-500/10`
+        : inactiveCls;
+
+      btnInferno.className = portal === 'inferno'
+        ? `${baseCls} bg-orange-500/20 border-orange-400 text-orange-300 shadow-lg shadow-orange-500/10`
+        : inactiveCls;
+
+      btnManager.className = portal === 'manager'
+        ? `${baseCls} bg-sky-500/20 border-sky-400 text-sky-300 shadow-lg shadow-sky-500/10`
+        : inactiveCls;
+
+      if (portal === 'frog') {
+        hint.textContent = 'Frog Kapı Girişi';
+        hint.className = 'text-[11px] font-bold text-emerald-400';
+        submitBtn.textContent = 'Frog Kapısına Gir';
+        submitBtn.className = 'w-full h-14 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition tap-btn';
+      } else if (portal === 'inferno') {
+        hint.textContent = 'Inferno Kapı Girişi';
+        hint.className = 'text-[11px] font-bold text-orange-400';
+        submitBtn.textContent = 'Inferno Kapısına Gir';
+        submitBtn.className = 'w-full h-14 bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-400 hover:to-amber-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition tap-btn';
+      } else {
+        hint.textContent = 'Müdür Canlı İzleme';
+        hint.className = 'text-[11px] font-bold text-sky-400';
+        submitBtn.textContent = 'İzleme Paneline Gir';
+        submitBtn.className = 'w-full h-14 bg-gradient-to-r from-sky-500 to-cyan-400 hover:from-sky-400 hover:to-cyan-300 text-zinc-950 font-black text-base rounded-2xl shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 transition tap-btn';
+      }
+
+      document.getElementById('pin-input').focus();
+    };
+
+    function getSavedSession() {
+      try {
+        const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if ((parsed.role === 'door' || parsed.role === 'manager') && (parsed.venue === 'frog' || parsed.venue === 'inferno')) {
+          return parsed;
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function updateVenueHeaderBranding() {
+      const meta = VENUE_META[activeVenue] || VENUE_META.frog;
+      const box = document.getElementById('header-badge-box');
+      const emoji = document.getElementById('header-venue-emoji');
+      const title = document.getElementById('header-venue-title');
+      const repHeading = document.getElementById('report-venue-heading');
+
+      if (box) box.className = meta.badgeBoxClass;
+      if (emoji) emoji.textContent = meta.emoji;
+      if (title) title.textContent = meta.title;
+      if (repHeading) repHeading.textContent = `${meta.title} — Vardiya Özeti`;
+
+      if (currentRole === 'manager') {
+        const btnFrog = document.getElementById('mgr-switch-frog');
+        const btnInferno = document.getElementById('mgr-switch-inferno');
+        if (btnFrog && btnInferno) {
+          btnFrog.className = activeVenue === 'frog'
+            ? 'py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition tap-btn bg-emerald-500/20 border border-emerald-400/50 text-emerald-300'
+            : 'py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition tap-btn text-zinc-400 hover:text-zinc-200 border border-transparent';
+
+          btnInferno.className = activeVenue === 'inferno'
+            ? 'py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition tap-btn bg-orange-500/20 border border-orange-400/50 text-orange-300'
+            : 'py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition tap-btn text-zinc-400 hover:text-zinc-200 border border-transparent';
+        }
+      }
+    }
+
+    window.switchManagerVenue = function (venue) {
+      if (currentRole !== 'manager') return;
+      if (venue !== 'frog' && venue !== 'inferno') return;
+      activeVenue = venue;
+      selectedChartHour = null;
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ role: 'manager', venue: activeVenue }));
+      updateVenueHeaderBranding();
+      syncVenueEntryTypes();
+      renderAll();
+      showToast(venue === 'frog' ? '🐸 Frog Canlı Akışına Geçildi' : '🔥 Inferno Canlı Akışına Geçildi');
+    };
+
+    function applySessionUI(role, venue) {
       currentRole = role;
+      activeVenue = venue || 'frog';
+
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('app-shell').classList.remove('hidden');
 
       const isManager = role === 'manager';
-      const managerBanner = document.getElementById('manager-readonly-banner');
+      const managerPanel = document.getElementById('manager-control-panel');
 
       if (isManager) {
-        managerBanner.classList.remove('hidden');
+        managerPanel.classList.remove('hidden');
         document.querySelectorAll('.door-only').forEach(el => el.classList.add('hidden'));
       } else {
-        managerBanner.classList.add('hidden');
+        managerPanel.classList.add('hidden');
         document.querySelectorAll('.door-only').forEach(el => el.classList.remove('hidden'));
       }
 
+      selectedEntryStaff = getActiveState().staffList[0] || '';
+      updateVenueHeaderBranding();
+      syncVenueEntryTypes();
       renderAll();
     }
 
@@ -959,14 +1230,25 @@
       const card = document.getElementById('auth-card');
       const code = (input.value || '').trim().toLowerCase();
 
-      let matchedRole = null;
-      if (code === DOOR_PIN) {
-        matchedRole = 'door';
-      } else if (code === MANAGER_PIN) {
-        matchedRole = 'manager';
+      let matched = false;
+      let role = 'door';
+      let venue = 'frog';
+
+      if (selectedLoginPortal === 'frog' && code === DOOR_PIN) {
+        matched = true;
+        role = 'door';
+        venue = 'frog';
+      } else if (selectedLoginPortal === 'inferno' && code === DOOR_PIN) {
+        matched = true;
+        role = 'door';
+        venue = 'inferno';
+      } else if (selectedLoginPortal === 'manager' && code === MANAGER_PIN) {
+        matched = true;
+        role = 'manager';
+        venue = 'frog';
       }
 
-      if (!matchedRole) {
+      if (!matched) {
         errMsg.classList.remove('hidden');
         card.classList.remove('animate-shake');
         void card.offsetWidth;
@@ -978,32 +1260,41 @@
 
       errMsg.classList.add('hidden');
       input.value = '';
-      localStorage.setItem(ROLE_STORAGE_KEY, matchedRole);
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ role, venue }));
 
-      applyRoleUI(matchedRole);
-      showToast(matchedRole === 'door' ? 'Kapı Operasyon Modu Açıldı' : 'Müdür Canlı İzleme Modu Açıldı');
+      applySessionUI(role, venue);
+      if (role === 'manager') {
+        showToast('Müdür Canlı İzleme Modu Açıldı');
+      } else {
+        showToast(venue === 'frog' ? '🐸 Frog Kapı Modu Açıldı' : '🔥 Inferno Kapı Modu Açıldı');
+      }
     };
 
     window.logoutSession = function () {
-      localStorage.removeItem(ROLE_STORAGE_KEY);
+      localStorage.removeItem(SESSION_STORAGE_KEY);
       currentRole = null;
       document.getElementById('app-shell').classList.add('hidden');
       document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('pin-error-msg').classList.add('hidden');
-      setTimeout(() => document.getElementById('pin-input').focus(), 100);
+      selectLoginPortal(selectedLoginPortal);
     };
 
     // =========================================================
-    // UYGULAMA DURUMU & FIREBASE + LOCALSTORAGE SENKRONİZASYONU
+    // BAĞIMSIZ MEKAN DURUMLARI (FROG & INFERNO)
     // =========================================================
+    const CACHE_KEYS = {
+      frog: 'kapi_kayit_cache_frog_v1',
+      inferno: 'kapi_kayit_cache_inferno_v1'
+    };
+
     const DEFAULT_STATE = {
       staffList: ['Avcu Bey', 'İşletme', 'Kapı'],
       bayCount: 0,
       bayanCount: 0,
       quickBayCount: 0,
-      entries: [],          // { id, guestName, staff, maleCount, entryType, time, note, timestamp, fromReservationId? }
-      reservations: [],     // { id, guestName, staff, maleCount, entryType, note, status: 'pending'|'checked_in', checkinTime?, linkedEntryId?, createdAt }
-      hourlyStats: {},      // { "23": { bay: 4, bayan: 6 }, "00": { bay: 12, bayan: 10 } }
+      entries: [],
+      reservations: [],
+      hourlyStats: {},
       shiftStart: new Date().toISOString(),
       updatedAt: 0
     };
@@ -1045,9 +1336,9 @@
       return recalculateDerivedFields(st);
     }
 
-    function loadLocalCache() {
+    function loadVenueCache(venue) {
       try {
-        const raw = localStorage.getItem(LOCAL_CACHE_KEY);
+        const raw = localStorage.getItem(CACHE_KEYS[venue]);
         if (!raw) return structuredClone(DEFAULT_STATE);
         return normalizeState(JSON.parse(raw));
       } catch (err) {
@@ -1055,8 +1346,20 @@
       }
     }
 
-    let state = loadLocalCache();
-    let selectedEntryStaff = state.staffList[0] || '';
+    const venueStates = {
+      frog: loadVenueCache('frog'),
+      inferno: loadVenueCache('inferno')
+    };
+
+    function getActiveState() {
+      return venueStates[activeVenue] || venueStates.frog;
+    }
+
+    function getActiveFirebaseRef() {
+      return activeVenue === 'inferno' ? infernoRef : frogRef;
+    }
+
+    let selectedEntryStaff = getActiveState().staffList[0] || '';
     let selectedEntryCount = 1;
     let selectedEntryType = 'Şişe Servisi';
     let currentLogFilter = 'ALL';
@@ -1084,56 +1387,70 @@
 
     function persistAndSync() {
       if (currentRole !== 'door') {
-        showToast('Salt okunur izleme modunda değişiklik yapılamaz');
+        showToast('Müdür izleme modunda değişiklik yapılamaz');
         return;
       }
 
-      recalculateDerivedFields(state);
-      state.updatedAt = Date.now();
+      const st = getActiveState();
+      recalculateDerivedFields(st);
+      st.updatedAt = Date.now();
 
       try {
-        localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(state));
+        localStorage.setItem(CACHE_KEYS[activeVenue], JSON.stringify(st));
       } catch (err) {
         console.error('LocalStorage hatası:', err);
       }
 
       renderAll();
 
-      if (activeShiftRef) {
-        set(activeShiftRef, state).catch(err => {
+      const targetRef = getActiveFirebaseRef();
+      if (targetRef) {
+        set(targetRef, st).catch(err => {
           console.error('Firebase yazma hatası:', err);
           updateConnectionUI(false);
         });
       }
     }
 
-    // Firebase Realtime Database Canlı Dinleyicileri
-    if (connectedRef && activeShiftRef) {
+    // Firebase Realtime Database Canlı Dinleyicileri (Hem Frog Hem Inferno)
+    if (connectedRef && frogRef && infernoRef) {
       onValue(connectedRef, (snap) => {
         const connected = snap.val() === true;
         updateConnectionUI(connected);
-        if (connected && currentRole === 'door' && state.updatedAt > 0) {
-          set(activeShiftRef, state).catch(() => {});
+        if (connected && currentRole === 'door') {
+          const st = getActiveState();
+          const targetRef = getActiveFirebaseRef();
+          if (targetRef && st.updatedAt > 0) {
+            set(targetRef, st).catch(() => {});
+          }
         }
       });
 
-      onValue(activeShiftRef, (snapshot) => {
+      onValue(frogRef, (snapshot) => {
         const remoteData = snapshot.val();
         if (remoteData) {
-          state = normalizeState(remoteData);
+          venueStates.frog = normalizeState(remoteData);
           try {
-            localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(state));
+            localStorage.setItem(CACHE_KEYS.frog, JSON.stringify(venueStates.frog));
           } catch (e) {}
-          if (currentRole) {
-            renderAll();
-          }
-        } else if (currentRole === 'door' && state.updatedAt > 0) {
-          set(activeShiftRef, state).catch(() => {});
+          if (currentRole) renderAll();
+        } else if (currentRole === 'door' && activeVenue === 'frog' && venueStates.frog.updatedAt > 0) {
+          set(frogRef, venueStates.frog).catch(() => {});
         }
-      }, (error) => {
-        console.error('Firebase dinleme hatası:', error);
-        updateConnectionUI(false);
-      });
+      }, () => updateConnectionUI(false));
+
+      onValue(infernoRef, (snapshot) => {
+        const remoteData = snapshot.val();
+        if (remoteData) {
+          venueStates.inferno = normalizeState(remoteData);
+          try {
+            localStorage.setItem(CACHE_KEYS.inferno, JSON.stringify(venueStates.inferno));
+          } catch (e) {}
+          if (currentRole) renderAll();
+        } else if (currentRole === 'door' && activeVenue === 'inferno' && venueStates.inferno.updatedAt > 0) {
+          set(infernoRef, venueStates.inferno).catch(() => {});
+        }
+      }, () => updateConnectionUI(false));
     }
 
     // =========================================================
@@ -1177,11 +1494,12 @@
     };
 
     function bumpHourlyStat(hourStr, genderKey, delta) {
+      const st = getActiveState();
       const h = String(hourStr).padStart(2, '0');
-      if (!state.hourlyStats[h]) {
-        state.hourlyStats[h] = { bay: 0, bayan: 0 };
+      if (!st.hourlyStats[h]) {
+        st.hourlyStats[h] = { bay: 0, bayan: 0 };
       }
-      state.hourlyStats[h][genderKey] = Math.max(0, (Number(state.hourlyStats[h][genderKey]) || 0) + delta);
+      st.hourlyStats[h][genderKey] = Math.max(0, (Number(st.hourlyStats[h][genderKey]) || 0) + delta);
     }
 
     // =========================================================
@@ -1189,16 +1507,17 @@
     // =========================================================
     window.adjustQuickMale = function (delta) {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       if (delta > 0) {
-        state.quickBayCount += 1;
+        st.quickBayCount += 1;
         bumpHourlyStat(getCurrentHourStr(), 'bay', 1);
         persistAndSync();
       } else if (delta < 0) {
-        if (state.quickBayCount <= 0) {
+        if (st.quickBayCount <= 0) {
           showToast('Hızlı bay sayacı 0');
           return;
         }
-        state.quickBayCount -= 1;
+        st.quickBayCount -= 1;
         bumpHourlyStat(getCurrentHourStr(), 'bay', -1);
         persistAndSync();
       }
@@ -1206,16 +1525,17 @@
 
     window.adjustQuickFemale = function (delta) {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       if (delta > 0) {
-        state.bayanCount += 1;
+        st.bayanCount += 1;
         bumpHourlyStat(getCurrentHourStr(), 'bayan', 1);
         persistAndSync();
       } else if (delta < 0) {
-        if (state.bayanCount <= 0) {
+        if (st.bayanCount <= 0) {
           showToast('Bayan sayacı 0');
           return;
         }
-        state.bayanCount -= 1;
+        st.bayanCount -= 1;
         bumpHourlyStat(getCurrentHourStr(), 'bayan', -1);
         persistAndSync();
       }
@@ -1225,28 +1545,29 @@
     // REFERANS / ÇALIŞAN YÖNETİMİ
     // =========================================================
     function renderEntryStaffPills() {
+      const st = getActiveState();
       const container = document.getElementById('entry-staff-pills');
       const resFormSel = document.getElementById('res-form-staff');
 
-      if (!state.staffList.includes(selectedEntryStaff)) {
-        selectedEntryStaff = state.staffList[0] || '';
+      if (!st.staffList.includes(selectedEntryStaff)) {
+        selectedEntryStaff = st.staffList[0] || '';
       }
 
       if (resFormSel) {
         const prev = resFormSel.value;
-        const list = state.staffList.length > 0 ? state.staffList : ['Belirtilmedi'];
+        const list = st.staffList.length > 0 ? st.staffList : ['Belirtilmedi'];
         resFormSel.innerHTML = list.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
         if (list.includes(prev)) resFormSel.value = prev;
         else if (selectedEntryStaff) resFormSel.value = selectedEntryStaff;
       }
 
       if (!container) return;
-      if (state.staffList.length === 0) {
+      if (st.staffList.length === 0) {
         container.innerHTML = `<button type="button" onclick="openStaffModal()" class="text-xs font-bold text-emerald-400 underline py-2 tap-btn">+ Önce referans / çalışan ekleyin</button>`;
         return;
       }
 
-      container.innerHTML = state.staffList.map(staff => {
+      container.innerHTML = st.staffList.map(staff => {
         const isSelected = staff === selectedEntryStaff;
         const cls = isSelected
           ? 'bg-emerald-400 text-zinc-950 border-emerald-400 font-extrabold shadow-md shadow-emerald-500/20'
@@ -1277,12 +1598,13 @@
     };
 
     function renderStaffModalList() {
+      const st = getActiveState();
       const list = document.getElementById('staff-modal-list');
-      if (state.staffList.length === 0) {
+      if (st.staffList.length === 0) {
         list.innerHTML = `<p class="text-xs text-zinc-500 text-center py-4">Henüz referans eklenmedi.</p>`;
         return;
       }
-      list.innerHTML = state.staffList.map((staff, idx) => `
+      list.innerHTML = st.staffList.map((staff, idx) => `
         <div class="flex items-center justify-between bg-surface border border-zinc-800 rounded-xl px-3.5 py-2.5">
           <span class="text-sm font-bold text-zinc-200">${escapeHtml(staff)}</span>
           <button type="button" onclick="removeStaffMember(${idx})" class="text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 px-3 py-1.5 rounded-lg tap-btn">
@@ -1294,14 +1616,15 @@
 
     window.addStaffMember = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const input = document.getElementById('new-staff-input');
       const val = input.value.trim();
       if (!val) return;
-      if (state.staffList.some(s => s.toLocaleLowerCase('tr-TR') === val.toLocaleLowerCase('tr-TR'))) {
+      if (st.staffList.some(s => s.toLocaleLowerCase('tr-TR') === val.toLocaleLowerCase('tr-TR'))) {
         showToast('Bu isim zaten listede var');
         return;
       }
-      state.staffList.push(val);
+      st.staffList.push(val);
       selectedEntryStaff = val;
       input.value = '';
       persistAndSync();
@@ -1311,9 +1634,10 @@
 
     window.removeStaffMember = function (idx) {
       if (currentRole !== 'door') return;
-      const removed = state.staffList[idx];
-      state.staffList.splice(idx, 1);
-      if (selectedEntryStaff === removed) selectedEntryStaff = state.staffList[0] || '';
+      const st = getActiveState();
+      const removed = st.staffList[idx];
+      st.staffList.splice(idx, 1);
+      if (selectedEntryStaff === removed) selectedEntryStaff = st.staffList[0] || '';
       persistAndSync();
       renderStaffModalList();
     };
@@ -1343,34 +1667,47 @@
 
     window.selectEntryType = function (type) {
       selectedEntryType = type;
-      const btnSise = document.getElementById('etype-sise');
-      const btnVip = document.getElementById('etype-vip');
-      const btnBiletli = document.getElementById('etype-biletli');
-
-      const base = 'etype-btn min-h-[54px] py-2.5 px-2 rounded-2xl border font-bold text-xs flex flex-col items-center justify-center gap-1 transition tap-btn';
-      const inactive = `${base} bg-surface border-zinc-800 text-zinc-400 hover:border-zinc-700`;
-
-      btnSise.className = type === 'Şişe Servisi'
-        ? `${base} bg-amber-500/20 border-amber-400 text-amber-300 shadow-lg shadow-amber-500/10`
-        : inactive;
-
-      btnVip.className = type === 'VIP Geçiş'
-        ? `${base} bg-purple-500/20 border-purple-400 text-purple-300 shadow-lg shadow-purple-500/10`
-        : inactive;
-
-      btnBiletli.className = type === 'Biletli Geçiş'
-        ? `${base} bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/10`
-        : inactive;
+      renderEntryTypeButtons();
     };
+
+    function renderEntryTypeButtons() {
+      const container = document.getElementById('entry-type-buttons-container');
+      if (!container) return;
+
+      const currentTypes = getVenueEntryTypes(activeVenue);
+      if (!currentTypes.some(t => t.id === selectedEntryType)) {
+        selectedEntryType = currentTypes[0].id;
+      }
+
+      if (currentTypes.length === 4) {
+        container.className = 'grid grid-cols-2 sm:grid-cols-4 gap-2';
+      } else {
+        container.className = `grid grid-cols-${Math.min(currentTypes.length, 3)} gap-2`;
+      }
+
+      const baseCls = 'etype-btn min-h-[52px] py-2 px-2 rounded-2xl border font-bold text-xs flex flex-col items-center justify-center gap-1 transition tap-btn';
+      const inactiveCls = `${baseCls} bg-surface border-zinc-800 text-zinc-400 hover:border-zinc-700`;
+
+      container.innerHTML = currentTypes.map(item => {
+        const isSelected = item.id === selectedEntryType;
+        const cls = isSelected ? `${baseCls} ${item.activeClass}` : inactiveCls;
+        return `
+          <button type="button" onclick="selectEntryType('${escapeHtml(item.id)}')" class="${cls}">
+            <span>${item.icon} ${escapeHtml(item.label)}</span>
+          </button>
+        `;
+      }).join('');
+    }
 
     window.saveDirectEntry = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const nameInput = document.getElementById('entry-guest-name');
       const noteInput = document.getElementById('entry-note');
       const guestName = nameInput.value.trim();
       const note = noteInput.value.trim();
       const timeVal = document.getElementById('entry-time').value || getCurrentHHMM();
-      const staff = selectedEntryStaff || state.staffList[0] || 'Belirtilmedi';
+      const staff = selectedEntryStaff || st.staffList[0] || 'Belirtilmedi';
 
       if (!guestName) {
         showToast('Lütfen misafir adını yazın');
@@ -1389,7 +1726,7 @@
         timestamp: Date.now()
       };
 
-      state.entries.unshift(newEntry);
+      st.entries.unshift(newEntry);
       bumpHourlyStat(extractHourStr(timeVal), 'bay', newEntry.maleCount);
 
       nameInput.value = '';
@@ -1406,6 +1743,7 @@
     // =========================================================
     window.submitInlineReservation = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const nameInput = document.getElementById('res-form-name');
       const guestName = nameInput.value.trim();
       if (!guestName) {
@@ -1419,7 +1757,7 @@
       const entryType = document.getElementById('res-form-type').value || 'Şişe Servisi';
       const note = document.getElementById('res-form-note').value.trim();
 
-      state.reservations.unshift({
+      st.reservations.unshift({
         id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         guestName,
         staff,
@@ -1440,7 +1778,8 @@
 
     window.openEditResModal = function (resId) {
       if (currentRole !== 'door') return;
-      const res = state.reservations.find(r => r.id === resId);
+      const st = getActiveState();
+      const res = st.reservations.find(r => r.id === resId);
       if (!res) return;
 
       document.getElementById('eres-id').value = res.id;
@@ -1459,8 +1798,13 @@
       }
 
       const staffSel = document.getElementById('eres-staff');
-      const opts = Array.from(new Set([...state.staffList, res.staff]));
+      const opts = Array.from(new Set([...st.staffList, res.staff]));
       staffSel.innerHTML = opts.map(s => `<option value="${escapeHtml(s)}" ${s === res.staff ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
+
+      const typeSel = document.getElementById('eres-type');
+      const venueTypes = getVenueEntryTypes(activeVenue).map(t => t.id);
+      const typeOpts = Array.from(new Set([...venueTypes, res.entryType].filter(Boolean)));
+      typeSel.innerHTML = typeOpts.map(s => `<option value="${escapeHtml(s)}" ${s === res.entryType ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
 
       document.getElementById('edit-res-modal').classList.remove('hidden');
     };
@@ -1471,8 +1815,9 @@
 
     window.saveEditedReservation = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const id = document.getElementById('eres-id').value;
-      const idx = state.reservations.findIndex(r => r.id === id);
+      const idx = st.reservations.findIndex(r => r.id === id);
       if (idx === -1) return;
 
       const name = document.getElementById('eres-name').value.trim();
@@ -1486,7 +1831,7 @@
       const entryType = document.getElementById('eres-type').value || 'Şişe Servisi';
       const note = document.getElementById('eres-note').value.trim();
 
-      const oldRes = state.reservations[idx];
+      const oldRes = st.reservations[idx];
       const updatedRes = {
         ...oldRes,
         guestName: name,
@@ -1495,17 +1840,17 @@
         entryType,
         note
       };
-      state.reservations[idx] = updatedRes;
+      st.reservations[idx] = updatedRes;
 
       if (updatedRes.status === 'checked_in' && updatedRes.linkedEntryId) {
-        const eIdx = state.entries.findIndex(e => e.id === updatedRes.linkedEntryId);
+        const eIdx = st.entries.findIndex(e => e.id === updatedRes.linkedEntryId);
         if (eIdx !== -1) {
-          const oldEntry = state.entries[eIdx];
+          const oldEntry = st.entries[eIdx];
           const countDiff = newCount - (Number(oldEntry.maleCount) || 0);
           if (countDiff !== 0) {
             bumpHourlyStat(extractHourStr(oldEntry.time), 'bay', countDiff);
           }
-          state.entries[eIdx] = {
+          st.entries[eIdx] = {
             ...oldEntry,
             guestName: name,
             staff,
@@ -1529,9 +1874,15 @@
 
     window.openBulkResModal = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const staffSel = document.getElementById('bulk-res-staff');
-      const list = state.staffList.length > 0 ? state.staffList : ['Belirtilmedi'];
+      const list = st.staffList.length > 0 ? st.staffList : ['Belirtilmedi'];
       staffSel.innerHTML = list.map(s => `<option value="${escapeHtml(s)}" ${s === selectedEntryStaff ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
+
+      const typeSel = document.getElementById('bulk-res-type');
+      const venueTypes = getVenueEntryTypes(activeVenue);
+      typeSel.innerHTML = venueTypes.map(s => `<option value="${escapeHtml(s.id)}" ${s.id === selectedEntryType ? 'selected' : ''}>${s.icon} ${escapeHtml(s.label)}</option>`).join('');
+
       document.getElementById('bulk-res-textarea').value = '';
       document.getElementById('bulk-res-modal').classList.remove('hidden');
       setTimeout(() => document.getElementById('bulk-res-textarea').focus(), 100);
@@ -1543,6 +1894,7 @@
 
     window.importBulkReservations = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const raw = document.getElementById('bulk-res-textarea').value;
       const staff = document.getElementById('bulk-res-staff').value || 'Belirtilmedi';
       const entryType = document.getElementById('bulk-res-type').value || 'Şişe Servisi';
@@ -1566,7 +1918,7 @@
           cleanName = line.replace(match[0], '').replace(/[-–()]+$/, '').trim() || line;
         }
 
-        state.reservations.unshift({
+        st.reservations.unshift({
           id: 'res_' + (Date.now() + idx) + '_' + Math.random().toString(36).slice(2, 6),
           guestName: cleanName,
           staff,
@@ -1585,16 +1937,17 @@
 
     window.checkInReservation = function (resId) {
       if (currentRole !== 'door') return;
-      const idx = state.reservations.findIndex(r => r.id === resId);
+      const st = getActiveState();
+      const idx = st.reservations.findIndex(r => r.id === resId);
       if (idx === -1) return;
 
-      const res = state.reservations[idx];
+      const res = st.reservations[idx];
       if (res.status === 'checked_in') return;
 
       const nowTime = getCurrentHHMM();
       const entryId = 'ent_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
 
-      state.entries.unshift({
+      st.entries.unshift({
         id: entryId,
         guestName: res.guestName,
         staff: res.staff,
@@ -1608,7 +1961,7 @@
 
       bumpHourlyStat(extractHourStr(nowTime), 'bay', res.maleCount);
 
-      state.reservations[idx] = {
+      st.reservations[idx] = {
         ...res,
         status: 'checked_in',
         checkinTime: nowTime,
@@ -1621,19 +1974,20 @@
 
     window.undoCheckInReservation = function (resId) {
       if (currentRole !== 'door') return;
-      const idx = state.reservations.findIndex(r => r.id === resId);
+      const st = getActiveState();
+      const idx = st.reservations.findIndex(r => r.id === resId);
       if (idx === -1) return;
 
-      const res = state.reservations[idx];
+      const res = st.reservations[idx];
       if (res.linkedEntryId) {
-        const linked = state.entries.find(e => e.id === res.linkedEntryId);
+        const linked = st.entries.find(e => e.id === res.linkedEntryId);
         if (linked) {
           bumpHourlyStat(extractHourStr(linked.time), 'bay', -(Number(linked.maleCount) || 0));
         }
-        state.entries = state.entries.filter(e => e.id !== res.linkedEntryId);
+        st.entries = st.entries.filter(e => e.id !== res.linkedEntryId);
       }
 
-      state.reservations[idx] = {
+      st.reservations[idx] = {
         ...res,
         status: 'pending',
         checkinTime: null,
@@ -1646,27 +2000,29 @@
 
     window.deleteReservation = function (resId) {
       if (currentRole !== 'door') return;
-      const target = state.reservations.find(r => r.id === resId);
+      const st = getActiveState();
+      const target = st.reservations.find(r => r.id === resId);
       if (target && target.status === 'checked_in' && target.linkedEntryId) {
-        const linked = state.entries.find(e => e.id === target.linkedEntryId);
+        const linked = st.entries.find(e => e.id === target.linkedEntryId);
         if (linked) {
           bumpHourlyStat(extractHourStr(linked.time), 'bay', -(Number(linked.maleCount) || 0));
         }
-        state.entries = state.entries.filter(e => e.id !== target.linkedEntryId);
+        st.entries = st.entries.filter(e => e.id !== target.linkedEntryId);
       }
-      state.reservations = state.reservations.filter(r => r.id !== resId);
+      st.reservations = st.reservations.filter(r => r.id !== resId);
       persistAndSync();
       showToast('Rezervasyon silindi');
     };
 
     window.renderReservations = function () {
+      const st = getActiveState();
       const pendingContainer = document.getElementById('pending-res-list');
       const checkedInContainer = document.getElementById('checkedin-res-list');
       const q = (document.getElementById('res-search-input')?.value || '').toLocaleLowerCase('tr-TR').trim();
       const isDoor = currentRole === 'door';
 
-      const allPending = state.reservations.filter(r => r.status === 'pending');
-      const allCheckedIn = state.reservations.filter(r => r.status === 'checked_in');
+      const allPending = st.reservations.filter(r => r.status === 'pending');
+      const allCheckedIn = st.reservations.filter(r => r.status === 'checked_in');
 
       document.getElementById('pending-res-badge-text').textContent = `${allPending.length} bekleyen`;
       document.getElementById('checkedin-res-badge-text').textContent = `${allCheckedIn.length} giriş yaptı`;
@@ -1772,12 +2128,6 @@
     // =========================================================
     // KAPI AKIŞI & DÜZENLEME
     // =========================================================
-    function getEntryTypeBadgeClass(type) {
-      if (type === 'Şişe Servisi') return 'bg-amber-500/15 text-amber-300 border-amber-500/30';
-      if (type === 'VIP Geçiş') return 'bg-purple-500/15 text-purple-300 border-purple-500/30';
-      return 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
-    }
-
     function buildEntryCardHTML(entry) {
       const badge = getEntryTypeBadgeClass(entry.entryType);
       const isDoor = currentRole === 'door';
@@ -1815,28 +2165,52 @@
       `;
     }
 
+    function renderLogFilterButtons() {
+      const container = document.getElementById('log-filter-buttons-container');
+      if (!container) return;
+
+      const currentTypes = getVenueEntryTypes(activeVenue);
+      if (currentLogFilter !== 'ALL' && !currentTypes.some(t => t.id === currentLogFilter)) {
+        currentLogFilter = 'ALL';
+      }
+
+      const activeAllCls = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap tap-btn';
+      const inactiveCls = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn';
+
+      let html = `
+        <button type="button" onclick="setLogFilter('ALL')" id="lfilter-ALL" class="${currentLogFilter === 'ALL' ? activeAllCls : inactiveCls}">Tümü</button>
+      `;
+
+      currentTypes.forEach(t => {
+        const isSel = currentLogFilter === t.id;
+        const cls = isSel ? activeAllCls : inactiveCls;
+        html += `
+          <button type="button" onclick="setLogFilter('${escapeHtml(t.id)}')" id="lfilter-${escapeHtml(t.id)}" class="${cls}">
+            ${escapeHtml(t.short)}
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
     window.setLogFilter = function (filter) {
       currentLogFilter = filter;
-      document.querySelectorAll('.log-filter-btn').forEach(btn => {
-        if (btn.id === `lfilter-${filter}`) {
-          btn.className = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-950 whitespace-nowrap tap-btn';
-        } else {
-          btn.className = 'log-filter-btn h-9 px-3.5 rounded-xl text-xs font-bold bg-surface text-zinc-400 border border-zinc-800 whitespace-nowrap tap-btn';
-        }
-      });
+      renderLogFilterButtons();
       renderLogs();
     };
 
     window.renderLogs = function () {
+      const st = getActiveState();
       const container = document.getElementById('all-logs-list');
       const countLabel = document.getElementById('logs-total-count-label');
       const q = (document.getElementById('log-search-input')?.value || '').toLocaleLowerCase('tr-TR').trim();
 
       if (countLabel) {
-        countLabel.textContent = `${state.entries.length} kayıt`;
+        countLabel.textContent = `${st.entries.length} kayıt`;
       }
 
-      const filtered = state.entries.filter(item => {
+      const filtered = st.entries.filter(item => {
         const matchType = currentLogFilter === 'ALL' || item.entryType === currentLogFilter;
         const matchQuery =
           !q ||
@@ -1856,14 +2230,15 @@
 
     window.deleteEntryById = function (id) {
       if (currentRole !== 'door') return;
-      const target = state.entries.find(e => e.id === id);
+      const st = getActiveState();
+      const target = st.entries.find(e => e.id === id);
       if (target) {
         bumpHourlyStat(extractHourStr(target.time), 'bay', -(Number(target.maleCount) || 0));
         if (target.fromReservationId) {
-          const rIdx = state.reservations.findIndex(r => r.id === target.fromReservationId);
+          const rIdx = st.reservations.findIndex(r => r.id === target.fromReservationId);
           if (rIdx !== -1) {
-            state.reservations[rIdx] = {
-              ...state.reservations[rIdx],
+            st.reservations[rIdx] = {
+              ...st.reservations[rIdx],
               status: 'pending',
               checkinTime: null,
               linkedEntryId: null
@@ -1871,14 +2246,15 @@
           }
         }
       }
-      state.entries = state.entries.filter(e => e.id !== id);
+      st.entries = st.entries.filter(e => e.id !== id);
       persistAndSync();
       showToast('Kayıt silindi');
     };
 
     window.openEditEntryModal = function (id) {
       if (currentRole !== 'door') return;
-      const entry = state.entries.find(e => e.id === id);
+      const st = getActiveState();
+      const entry = st.entries.find(e => e.id === id);
       if (!entry) return;
 
       document.getElementById('edit-entry-id').value = entry.id;
@@ -1889,8 +2265,13 @@
       document.getElementById('edit-entry-note').value = entry.note || '';
 
       const staffSel = document.getElementById('edit-entry-staff');
-      const opts = Array.from(new Set([...state.staffList, entry.staff]));
+      const opts = Array.from(new Set([...st.staffList, entry.staff]));
       staffSel.innerHTML = opts.map(s => `<option value="${escapeHtml(s)}" ${s === entry.staff ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
+
+      const typeSel = document.getElementById('edit-entry-type');
+      const venueTypes = getVenueEntryTypes(activeVenue).map(t => t.id);
+      const typeOpts = Array.from(new Set([...venueTypes, entry.entryType].filter(Boolean)));
+      typeSel.innerHTML = typeOpts.map(s => `<option value="${escapeHtml(s)}" ${s === entry.entryType ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('');
 
       document.getElementById('edit-entry-modal').classList.remove('hidden');
     };
@@ -1901,8 +2282,9 @@
 
     window.saveEditedEntry = function () {
       if (currentRole !== 'door') return;
+      const st = getActiveState();
       const id = document.getElementById('edit-entry-id').value;
-      const idx = state.entries.findIndex(e => e.id === id);
+      const idx = st.entries.findIndex(e => e.id === id);
       if (idx === -1) return;
 
       const name = document.getElementById('edit-entry-name').value.trim();
@@ -1911,7 +2293,7 @@
         return;
       }
 
-      const oldEntry = state.entries[idx];
+      const oldEntry = st.entries[idx];
       const count = Math.max(1, parseInt(document.getElementById('edit-entry-count').value, 10) || 1);
       const staff = document.getElementById('edit-entry-staff').value;
       const time = document.getElementById('edit-entry-time').value || '00:00';
@@ -1921,7 +2303,7 @@
       bumpHourlyStat(extractHourStr(oldEntry.time), 'bay', -(Number(oldEntry.maleCount) || 0));
       bumpHourlyStat(extractHourStr(time), 'bay', count);
 
-      state.entries[idx] = {
+      st.entries[idx] = {
         ...oldEntry,
         guestName: name,
         staff,
@@ -1932,10 +2314,10 @@
       };
 
       if (oldEntry.fromReservationId) {
-        const rIdx = state.reservations.findIndex(r => r.id === oldEntry.fromReservationId);
+        const rIdx = st.reservations.findIndex(r => r.id === oldEntry.fromReservationId);
         if (rIdx !== -1) {
-          state.reservations[rIdx] = {
-            ...state.reservations[rIdx],
+          st.reservations[rIdx] = {
+            ...st.reservations[rIdx],
             guestName: name,
             staff,
             maleCount: count,
@@ -1961,7 +2343,8 @@
     // SEKME 3: SAATLİK YOĞUNLUK HESAPLAMA & GRAFİK RENDER
     // =========================================================
     function buildHourlyDensityData() {
-      const buckets = Object.entries(state.hourlyStats || {})
+      const st = getActiveState();
+      const buckets = Object.entries(st.hourlyStats || {})
         .map(([hourKey, vals]) => {
           const hour = String(hourKey).padStart(2, '0');
           const male = Math.max(0, Number(vals?.bay) || 0);
@@ -2082,12 +2465,9 @@
     }
 
     // =========================================================
-    // SEKME 4: VARDİYA ÖZETİ & WHATSAPP RAPORU (KAYIT/MASA ADEDİ)
+    // SEKME 4: VARDİYA ÖZETİ & WHATSAPP RAPORU
     // =========================================================
     function formatEntryTypeLower(type) {
-      if (type === 'Şişe Servisi') return 'şişe servisi';
-      if (type === 'VIP Geçiş') return 'vip geçiş';
-      if (type === 'Biletli Geçiş') return 'biletli geçiş';
       return (type || '').toLocaleLowerCase('tr-TR');
     }
 
@@ -2101,43 +2481,56 @@
     }
 
     function calculateShiftBreakdown() {
-      let siseRecordCount = 0;
-      let siseMaleHeadcount = 0;
+      const st = getActiveState();
+      const currentTypes = getVenueEntryTypes(activeVenue);
+      const typeStats = {};
 
-      let vipRecordCount = 0;
-      let vipMaleHeadcount = 0;
-
-      let biletliRecordCount = 0;
-      let biletliMaleHeadcount = 0;
+      currentTypes.forEach(t => {
+        typeStats[t.id] = {
+          id: t.id,
+          label: t.label,
+          short: t.short,
+          unit: t.unit,
+          icon: t.icon,
+          meta: t,
+          recordCount: 0,
+          maleHeadcount: 0
+        };
+      });
 
       const staffMap = {};
 
-      const chronological = [...state.entries].reverse().sort((a, b) => {
+      const chronological = [...st.entries].reverse().sort((a, b) => {
         if (a.time !== b.time) return a.time.localeCompare(b.time);
         return (a.timestamp || 0) - (b.timestamp || 0);
       });
 
       chronological.forEach(entry => {
         const guestHeadcount = Number(entry.maleCount) || 0;
+        const tKey = entry.entryType;
 
-        if (entry.entryType === 'Şişe Servisi') {
-          siseRecordCount += 1;
-          siseMaleHeadcount += guestHeadcount;
-        } else if (entry.entryType === 'VIP Geçiş') {
-          vipRecordCount += 1;
-          vipMaleHeadcount += guestHeadcount;
-        } else if (entry.entryType === 'Biletli Geçiş') {
-          biletliRecordCount += 1;
-          biletliMaleHeadcount += guestHeadcount;
+        if (!typeStats[tKey]) {
+          const fallbackMeta = getEntryTypeMeta(tKey);
+          typeStats[tKey] = {
+            id: tKey,
+            label: fallbackMeta.label || tKey,
+            short: fallbackMeta.short || tKey,
+            unit: fallbackMeta.unit || 'Kayıt',
+            icon: fallbackMeta.icon || '🏷️',
+            meta: fallbackMeta,
+            recordCount: 0,
+            maleHeadcount: 0
+          };
         }
+
+        typeStats[tKey].recordCount += 1;
+        typeStats[tKey].maleHeadcount += guestHeadcount;
 
         if (!staffMap[entry.staff]) {
           staffMap[entry.staff] = {
             totalMale: 0,
-            siseRecords: 0,
-            vipRecords: 0,
-            biletliRecords: 0,
             totalRecords: 0,
+            typeRecords: {},
             items: []
           };
         }
@@ -2145,57 +2538,51 @@
         staffMap[entry.staff].totalMale += guestHeadcount;
         staffMap[entry.staff].totalRecords += 1;
         staffMap[entry.staff].items.push(entry);
-
-        if (entry.entryType === 'Şişe Servisi') {
-          staffMap[entry.staff].siseRecords += 1;
-        } else if (entry.entryType === 'VIP Geçiş') {
-          staffMap[entry.staff].vipRecords += 1;
-        } else if (entry.entryType === 'Biletli Geçiş') {
-          staffMap[entry.staff].biletliRecords += 1;
-        }
+        staffMap[entry.staff].typeRecords[tKey] = (staffMap[entry.staff].typeRecords[tKey] || 0) + 1;
       });
 
       return {
-        siseRecordCount,
-        siseMaleHeadcount,
-        vipRecordCount,
-        vipMaleHeadcount,
-        biletliRecordCount,
-        biletliMaleHeadcount,
+        typeStats,
         staffMap
       };
     }
 
     function renderShiftReport() {
+      const st = getActiveState();
       const now = new Date();
       document.getElementById('report-date-subtitle').textContent = now.toLocaleDateString('tr-TR', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      const totalMale = state.bayCount;
-      const totalFemale = state.bayanCount;
+      const totalMale = st.bayCount;
+      const totalFemale = st.bayanCount;
       const grandTotal = totalMale + totalFemale;
 
       document.getElementById('rep-total-male').textContent = totalMale;
       document.getElementById('rep-total-female').textContent = totalFemale;
       document.getElementById('rep-grand-total').textContent = grandTotal;
 
-      const {
-        siseRecordCount,
-        siseMaleHeadcount,
-        vipRecordCount,
-        vipMaleHeadcount,
-        biletliRecordCount,
-        biletliMaleHeadcount,
-        staffMap
-      } = calculateShiftBreakdown();
+      const { typeStats, staffMap } = calculateShiftBreakdown();
 
-      document.getElementById('rep-sise-count').textContent = `${siseRecordCount} Şişe`;
-      document.getElementById('rep-sise-male').textContent = `${siseMaleHeadcount} Bay`;
-      document.getElementById('rep-vip-count').textContent = `${vipRecordCount} VIP`;
-      document.getElementById('rep-vip-male').textContent = `${vipMaleHeadcount} Bay`;
-      document.getElementById('rep-biletli-count').textContent = `${biletliRecordCount} Bilet`;
-      document.getElementById('rep-biletli-male').textContent = `${biletliMaleHeadcount} Bay`;
+      const summaryContainer = document.getElementById('rep-entry-type-summary');
+      if (summaryContainer) {
+        const statsList = Object.values(typeStats);
+        if (statsList.length === 4) {
+          summaryContainer.className = 'grid grid-cols-2 sm:grid-cols-4 gap-2';
+        } else {
+          summaryContainer.className = `grid grid-cols-${Math.min(statsList.length, 3)} gap-2`;
+        }
+
+        summaryContainer.innerHTML = statsList.map(item => {
+          return `
+            <div class="bg-surface border ${item.meta.borderCardClass || 'border-zinc-700'} rounded-2xl p-2.5">
+              <div class="text-[11px] font-bold ${item.meta.statColor || 'text-zinc-300'} truncate">${item.icon} ${escapeHtml(item.label)}</div>
+              <div class="text-base font-black text-white tabular-nums mt-1">${item.recordCount} ${escapeHtml(item.unit)}</div>
+              <div class="text-[11px] text-zinc-400">${item.maleHeadcount} Bay</div>
+            </div>
+          `;
+        }).join('');
+      }
 
       const staffContainer = document.getElementById('rep-staff-breakdown');
       const sortedStaff = Object.entries(staffMap).sort((a, b) => b[1].totalMale - a[1].totalMale);
@@ -2207,14 +2594,16 @@
 
       staffContainer.innerHTML = sortedStaff.map(([staffName, data]) => {
         const badges = [];
-        if (data.siseRecords > 0) badges.push(`<span class="text-amber-400 font-bold">${data.siseRecords} Şişe</span>`);
-        if (data.vipRecords > 0) badges.push(`<span class="text-purple-400 font-bold">${data.vipRecords} VIP</span>`);
-        if (data.biletliRecords > 0) badges.push(`<span class="text-cyan-400 font-bold">${data.biletliRecords} Bilet</span>`);
+        Object.entries(data.typeRecords).forEach(([tKey, count]) => {
+          if (count > 0) {
+            const meta = getEntryTypeMeta(tKey);
+            badges.push(`<span class="${meta.statColor} font-bold">${count} ${escapeHtml(meta.unit || meta.short)}</span>`);
+          }
+        });
 
         const linesHtml = data.items.map(item => {
-          let dot = 'bg-cyan-400';
-          if (item.entryType === 'Şişe Servisi') dot = 'bg-amber-400';
-          else if (item.entryType === 'VIP Geçiş') dot = 'bg-purple-400';
+          const meta = getEntryTypeMeta(item.entryType);
+          const dot = meta.dotClass || 'bg-cyan-400';
 
           return `
             <div class="text-xs text-zinc-200 bg-oled/80 border border-zinc-800/90 rounded-xl px-3 py-2 font-medium flex items-center gap-2">
@@ -2245,30 +2634,24 @@
     }
 
     window.copyEndOfNightReport = function () {
-      const totalMale = state.bayCount;
-      const totalFemale = state.bayanCount;
+      const st = getActiveState();
+      const meta = VENUE_META[activeVenue] || VENUE_META.frog;
+      const totalMale = st.bayCount;
+      const totalFemale = st.bayanCount;
       const grandTotal = totalMale + totalFemale;
       const dateStr = new Date().toLocaleDateString('tr-TR');
 
-      const {
-        siseRecordCount,
-        siseMaleHeadcount,
-        vipRecordCount,
-        vipMaleHeadcount,
-        biletliRecordCount,
-        biletliMaleHeadcount,
-        staffMap
-      } = calculateShiftBreakdown();
-
+      const { typeStats, staffMap } = calculateShiftBreakdown();
       const { buckets, peakBucket } = buildHourlyDensityData();
 
-      let report = `🐸 *FROG KAYIT — GECE SONU RAPORU (${dateStr})*\n\n`;
+      let report = `${meta.reportPrefix} — GECE SONU RAPORU (${dateStr})*\n\n`;
       report += `👥 *Genel Toplam:* ${grandTotal} Kişi\n`;
       report += `👨 *Toplam Bay:* ${totalMale}\n`;
       report += `👩 *Toplam Bayan:* ${totalFemale}\n\n`;
-      report += `🍾 *Toplam Şişe Servisi:* ${siseRecordCount} Şişe (${siseMaleHeadcount} Bay)\n`;
-      report += `✨ *Toplam VIP Geçiş:* ${vipRecordCount} VIP (${vipMaleHeadcount} Bay)\n`;
-      report += `🎟️ *Toplam Biletli Geçiş:* ${biletliRecordCount} Bilet (${biletliMaleHeadcount} Bay)\n`;
+
+      Object.values(typeStats).forEach(item => {
+        report += `${item.icon} *Toplam ${item.label}:* ${item.recordCount} ${item.unit} (${item.maleHeadcount} Bay)\n`;
+      });
 
       if (buckets.length > 0) {
         report += `\n⏱️ *SAATLİK YOĞUNLUK (En Yoğun: ${peakBucket.label} - ${peakBucket.total} kişi):*\n`;
@@ -2282,9 +2665,12 @@
         report += `\n📋 *REFERANS & MİSAFİR DETAYLARI:*\n`;
         sortedStaff.forEach(([staffName, d]) => {
           const parts = [];
-          if (d.siseRecords > 0) parts.push(`${d.siseRecords} Şişe`);
-          if (d.vipRecords > 0) parts.push(`${d.vipRecords} VIP`);
-          if (d.biletliRecords > 0) parts.push(`${d.biletliRecords} Bilet`);
+          Object.entries(d.typeRecords).forEach(([tKey, count]) => {
+            if (count > 0) {
+              const tMeta = getEntryTypeMeta(tKey);
+              parts.push(`${count} ${tMeta.unit || tMeta.short}`);
+            }
+          });
 
           report += `\n📌 *${staffName}* — Toplam ${d.totalMale} Bay (${parts.join(', ')})\n`;
           d.items.forEach(item => {
@@ -2301,7 +2687,7 @@
       textarea.select();
       try {
         document.execCommand('copy');
-        showToast('WhatsApp raporu panoya kopyalandı!');
+        showToast(`${meta.title} raporu panoya kopyalandı!`);
       } catch (e) {
         showToast('Kopyalama başarısız oldu');
       }
@@ -2322,13 +2708,14 @@
 
     window.confirmResetNight = function () {
       if (currentRole !== 'door') return;
-      state.bayCount = 0;
-      state.bayanCount = 0;
-      state.quickBayCount = 0;
-      state.entries = [];
-      state.reservations = [];
-      state.hourlyStats = {};
-      state.shiftStart = new Date().toISOString();
+      const st = getActiveState();
+      st.bayCount = 0;
+      st.bayanCount = 0;
+      st.quickBayCount = 0;
+      st.entries = [];
+      st.reservations = [];
+      st.hourlyStats = {};
+      st.shiftStart = new Date().toISOString();
       selectedChartHour = null;
       closeResetModal();
       persistAndSync();
@@ -2359,13 +2746,24 @@
     // GENEL ARAYÜZ GÜNCELLEME & YARDIMCILAR
     // =========================================================
     function renderAll() {
-      const totalMale = state.bayCount;
-      const totalFemale = state.bayanCount;
+      const st = getActiveState();
+      const totalMale = st.bayCount;
+      const totalFemale = st.bayanCount;
       const grandTotal = totalMale + totalFemale;
 
       document.getElementById('total-male-display').textContent = totalMale;
       document.getElementById('total-female-display').textContent = totalFemale;
       document.getElementById('grand-total-display').textContent = grandTotal;
+
+      // Müdür kanal seçicisi üzerindeki canlı mini toplamlar
+      if (currentRole === 'manager') {
+        const frogTotal = venueStates.frog.bayCount + venueStates.frog.bayanCount;
+        const infernoTotal = venueStates.inferno.bayCount + venueStates.inferno.bayanCount;
+        const frogMini = document.getElementById('mgr-frog-mini-total');
+        const infernoMini = document.getElementById('mgr-inferno-mini-total');
+        if (frogMini) frogMini.textContent = frogTotal;
+        if (infernoMini) infernoMini.textContent = infernoTotal;
+      }
 
       const malePct = grandTotal > 0 ? Math.round((totalMale / grandTotal) * 100) : 0;
       const femalePct = grandTotal > 0 ? 100 - malePct : 0;
@@ -2377,7 +2775,7 @@
       document.getElementById('ratio-bar-male').style.width = `${barMalePct}%`;
       document.getElementById('ratio-bar-female').style.width = `${barFemalePct}%`;
 
-      const pendingCount = state.reservations.filter(r => r.status === 'pending').length;
+      const pendingCount = st.reservations.filter(r => r.status === 'pending').length;
       const resBadge = document.getElementById('nav-res-badge');
       if (pendingCount > 0) {
         resBadge.textContent = pendingCount;
@@ -2387,14 +2785,16 @@
       }
 
       const logsBadge = document.getElementById('nav-logs-badge');
-      if (state.entries.length > 0) {
-        logsBadge.textContent = state.entries.length;
+      if (st.entries.length > 0) {
+        logsBadge.textContent = st.entries.length;
         logsBadge.classList.remove('hidden');
       } else {
         logsBadge.classList.add('hidden');
       }
 
       renderEntryStaffPills();
+      renderEntryTypeButtons();
+      renderLogFilterButtons();
       renderLogs();
       renderReservations();
       renderHourlyDensityChart();
@@ -2433,13 +2833,13 @@
       syncLiveEntryClock();
       setInterval(syncLiveEntryClock, 5000);
       selectEntryCount(1);
-      selectEntryType('Şişe Servisi');
+      syncVenueEntryTypes();
 
-      const savedRole = getSavedRole();
-      if (savedRole) {
-        applyRoleUI(savedRole);
+      const savedSession = getSavedSession();
+      if (savedSession) {
+        applySessionUI(savedSession.role, savedSession.venue);
       } else {
-        setTimeout(() => document.getElementById('pin-input').focus(), 150);
+        selectLoginPortal('frog');
       }
     });
   </script>
