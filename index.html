@@ -15,6 +15,9 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- html2pdf.js (A4 PDF Motoru: jsPDF & html2canvas) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -101,6 +104,55 @@
     input[type="time"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
       opacity: 0.8;
+    }
+
+    /* A4 PDF & Yazdırma Stilleri */
+    @media print {
+      body {
+        background-color: #09090b !important;
+        color: #f4f4f5 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body * {
+        visibility: hidden !important;
+      }
+      #pdf-render-content, #pdf-render-content * {
+        visibility: visible !important;
+      }
+      #pdf-export-modal {
+        position: static !important;
+        display: block !important;
+        background: transparent !important;
+        padding: 0 !important;
+      }
+      #pdf-preview-container {
+        padding: 0 !important;
+        background: transparent !important;
+      }
+      #pdf-preview-scaler {
+        transform: none !important;
+        height: auto !important;
+      }
+      #pdf-render-content {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background-color: #09090b !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      @page {
+        size: auto;
+        margin: 4mm;
+      }
     }
   </style>
 </head>
@@ -576,11 +628,22 @@
             <div id="rep-staff-breakdown" class="space-y-2.5"></div>
           </div>
 
-          <!-- WhatsApp Raporu Kopyala Butonu (Hem Kapı Hem Müdür Kullanabilir) -->
-          <button type="button" onclick="copyEndOfNightReport()" class="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-sm rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition tap-btn">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-            WhatsApp Raporunu Kopyala
-          </button>
+          <!-- Gece Sonu & Vardiya Rapor Butonları -->
+          <div class="space-y-2.5 pt-1">
+            <!-- Detaylı Tek Sayfa PDF Raporu (İndir / Paylaş) -->
+            <button type="button" onclick="openPdfReportModal()" class="w-full h-14 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-600 hover:from-emerald-400 hover:to-indigo-500 text-zinc-950 hover:text-white font-black text-sm rounded-2xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2.5 transition tap-btn">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Detaylı PDF Raporu (Tek Sayfa • İndir / Paylaş)</span>
+            </button>
+
+            <!-- WhatsApp Raporu Kopyala Butonu -->
+            <button type="button" onclick="copyEndOfNightReport()" class="w-full h-12 bg-surface hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 font-extrabold text-xs rounded-2xl flex items-center justify-center gap-2 transition tap-btn">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+              <span>WhatsApp Metin Raporunu Kopyala</span>
+            </button>
+          </div>
 
           <!-- Alt Yönetim Alanı: Yeni Gece Başlat (Sadece Kapı) + Çıkış / Birim Değiştir (Herkes) -->
           <div class="pt-4 border-t border-zinc-800/90 space-y-2.5">
@@ -854,6 +917,82 @@
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="closeResetModal()" class="h-12 bg-zinc-800 text-zinc-300 font-bold rounded-2xl text-sm tap-btn">Vazgeç</button>
         <button type="button" onclick="confirmResetNight()" class="h-12 bg-red-500 text-white font-black rounded-2xl text-sm tap-btn">Evet, Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 6: A4 PDF VARDİYA RAPORU ÖNİZLEME & PAYLAŞMA        -->
+  <!-- ========================================================= -->
+  <div id="pdf-export-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex flex-col p-2 sm:p-4">
+    <div class="bg-panel border border-zinc-800 w-full max-w-5xl mx-auto h-full max-h-[96vh] rounded-3xl flex flex-col shadow-2xl overflow-hidden">
+
+      <!-- Modal Başlığı ve Aksiyonlar -->
+      <div class="p-3.5 sm:p-4 border-b border-zinc-800 flex items-center justify-between gap-2 shrink-0 bg-surface/90">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <div class="truncate">
+            <h3 class="text-sm sm:text-base font-extrabold text-white truncate">Vardiya Raporu (PDF)</h3>
+            <p class="text-[11px] text-zinc-400 hidden sm:block">Bölünmeyen tek sayfa döküm • Doğrudan indir veya paylaş</p>
+          </div>
+        </div>
+
+        <!-- Üst Buton Grubu -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <button type="button" onclick="shareShiftPdf()" class="h-9 px-3 sm:px-4 bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition tap-btn shadow-md shadow-indigo-500/20" title="WhatsApp veya diğer uygulamalarla paylaş">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+            <span class="hidden xs:inline">Paylaş</span>
+          </button>
+
+          <button type="button" onclick="downloadShiftPdf()" class="h-9 px-3 sm:px-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs rounded-xl flex items-center gap-1.5 transition tap-btn shadow-md shadow-emerald-500/20" title="PDF dosyasını telefona indir">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>İndir (PDF)</span>
+          </button>
+
+          <button type="button" onclick="printShiftPdf()" class="h-9 px-2.5 bg-surface hover:bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold text-xs rounded-xl hidden sm:flex items-center gap-1.5 transition tap-btn" title="Yazdır / PDF Olarak Kaydet">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          </button>
+
+          <button type="button" onclick="closePdfReportModal()" class="w-9 h-9 bg-surface hover:bg-zinc-800 border border-zinc-700 text-zinc-400 hover:text-white rounded-xl flex items-center justify-center transition tap-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Önizleme Alanı: Mobilde Otomatik Ölçeklenir -->
+      <div id="pdf-preview-container" class="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-5 bg-oled flex justify-center items-start">
+        <div id="pdf-preview-scaler" class="transition-transform origin-top">
+          <!-- Bölünmeyen Tek Sayfa Rapor Alanı (794px genişlik, dinamik yükseklik) -->
+          <div id="pdf-render-content" style="width: 794px; background-color: #09090b;" class="text-zinc-100 p-7 sm:p-8 rounded-2xl border border-zinc-800 space-y-5 shadow-2xl">
+            <!-- Dinamik Olarak renderA4PdfReportDOM() tarafından doldurulur -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobil Cihazlar İçin Alt Sabit Aksiyon Barı -->
+      <div class="p-3 border-t border-zinc-800 bg-surface/95 flex sm:hidden items-center gap-2 shrink-0">
+        <button type="button" onclick="shareShiftPdf()" class="flex-1 h-12 bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 tap-btn shadow-md shadow-indigo-500/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+          Paylaş (WhatsApp)
+        </button>
+        <button type="button" onclick="downloadShiftPdf()" class="flex-1 h-12 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs rounded-xl flex items-center justify-center gap-2 tap-btn shadow-md shadow-emerald-500/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Telefona İndir
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PDF İşlem Yükleniyor Overlay -->
+  <div id="pdf-loading-overlay" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-panel border border-zinc-800 rounded-3xl p-6 max-w-xs w-full text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin mx-auto"></div>
+      <div>
+        <h4 class="text-sm font-extrabold text-white" id="pdf-loading-title">PDF Hazırlanıyor...</h4>
+        <p class="text-xs text-zinc-400 mt-1" id="pdf-loading-subtitle">Grafikler ve istatistikler işleniyor, lütfen bekleyin.</p>
       </div>
     </div>
   </div>
@@ -2693,6 +2832,645 @@
       }
       document.body.removeChild(textarea);
     };
+
+    // =========================================================
+    // A4 PDF VARDİYA RAPORU, GRAFİK, İSTATİSTİK & PAYLAŞIM MOTORU
+    // =========================================================
+    let isPdfGenerating = false;
+
+    function showPdfLoading(title, subtitle) {
+      const overlay = document.getElementById('pdf-loading-overlay');
+      if (overlay) {
+        if (title) document.getElementById('pdf-loading-title').textContent = title;
+        if (subtitle) document.getElementById('pdf-loading-subtitle').textContent = subtitle;
+        overlay.classList.remove('hidden');
+      }
+    }
+
+    function hidePdfLoading() {
+      const overlay = document.getElementById('pdf-loading-overlay');
+      if (overlay) overlay.classList.add('hidden');
+    }
+
+    function ensureHtml2PdfLoaded() {
+      return new Promise((resolve) => {
+        if (typeof html2pdf !== 'undefined') return resolve(true);
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      });
+    }
+
+    function getShiftPdfFileName() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const venueCode = activeVenue === 'frog' ? 'Frog' : 'Inferno';
+      return `${venueCode}-Vardiya-Raporu-${y}-${m}-${d}.pdf`;
+    }
+
+    window.fitPdfPreview = function () {
+      const container = document.getElementById('pdf-preview-container');
+      const scaler = document.getElementById('pdf-preview-scaler');
+      const content = document.getElementById('pdf-render-content');
+      if (!container || !scaler || !content) return;
+
+      const availWidth = container.clientWidth - 16;
+      const contentWidth = 794; // Hedef A4 genişliği (px)
+
+      if (availWidth < contentWidth && availWidth > 0) {
+        const scale = Math.max(0.35, Math.min(1, availWidth / contentWidth));
+        scaler.style.transform = `scale(${scale})`;
+        scaler.style.transformOrigin = 'top center';
+        scaler.style.height = `${content.scrollHeight * scale}px`;
+        scaler.style.marginBottom = '24px';
+      } else {
+        scaler.style.transform = 'none';
+        scaler.style.height = 'auto';
+        scaler.style.marginBottom = '0';
+      }
+    };
+
+    window.openPdfReportModal = function () {
+      renderA4PdfReportDOM();
+      const modal = document.getElementById('pdf-export-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        window.fitPdfPreview();
+        setTimeout(window.fitPdfPreview, 60);
+      }
+    };
+
+    window.closePdfReportModal = function () {
+      const modal = document.getElementById('pdf-export-modal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    function renderA4PdfReportDOM() {
+      const container = document.getElementById('pdf-render-content');
+      if (!container) return;
+
+      const st = getActiveState();
+      const meta = VENUE_META[activeVenue] || VENUE_META.frog;
+      const totalMale = Math.max(0, Number(st.bayCount) || 0);
+      const totalFemale = Math.max(0, Number(st.bayanCount) || 0);
+      const grandTotal = totalMale + totalFemale;
+
+      const malePct = grandTotal > 0 ? Math.round((totalMale / grandTotal) * 100) : 0;
+      const femalePct = grandTotal > 0 ? 100 - malePct : 0;
+
+      const { typeStats, staffMap } = calculateShiftBreakdown();
+      const { buckets, peakBucket } = buildHourlyDensityData();
+
+      const now = new Date();
+      const dateStrLong = now.toLocaleDateString('tr-TR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const dateStrShort = now.toLocaleDateString('tr-TR');
+      const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+      let shiftStartStr = '--:--';
+      let durationStr = '';
+      if (st.shiftStart) {
+        try {
+          const startDate = new Date(st.shiftStart);
+          shiftStartStr = startDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+          const diffMs = Math.max(0, now.getTime() - startDate.getTime());
+          const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+          durationStr = `${diffHrs} Sa ${diffMins} Dk`;
+        } catch (e) {}
+      }
+
+      const peakText = peakBucket ? `${peakBucket.label}` : 'Veri Yok';
+      const peakCount = peakBucket ? `${peakBucket.total} Kişi` : '--';
+
+      const reportCode = `DF-${activeVenue.toUpperCase()}-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+
+      // 1. Giriş Tipleri Dağılım Kartları
+      const statsList = Object.values(typeStats);
+      const entryCardsHtml = statsList.map(item => {
+        const itemMeta = item.meta || {};
+        const pctOfGrand = grandTotal > 0 ? Math.round((item.maleHeadcount / grandTotal) * 100) : 0;
+        return `
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="p-3.5 rounded-2xl flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold ${itemMeta.statColor || 'text-zinc-300'} flex items-center gap-1.5">
+                <span>${item.icon}</span> <span>${escapeHtml(item.label)}</span>
+              </span>
+              <span style="background-color: #18181b; border: 1px solid #27272a;" class="text-[10px] font-bold px-2 py-0.5 rounded text-zinc-400">%${pctOfGrand} Pay</span>
+            </div>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div class="text-xl font-black text-white tabular-nums">${item.recordCount} <span class="text-xs font-semibold text-zinc-400">${escapeHtml(item.unit)}</span></div>
+              <div class="text-xs font-bold text-indigo-400 tabular-nums">${item.maleHeadcount} Bay</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 2. Saatlik Yoğunluk Grafiği
+      let chartHtml = '';
+      if (buckets.length === 0) {
+        chartHtml = `
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-6 text-center text-xs text-zinc-500">
+            Henüz saatlik giriş verisi oluşmadı. Girişler yapıldıkça yoğunluk grafiği burada listelenir.
+          </div>
+        `;
+      } else {
+        const maxVal = Math.max(...buckets.map(b => b.total), 1);
+        const barsHtml = buckets.map(b => {
+          const totalHeightPct = Math.max(16, Math.round((b.total / maxVal) * 100));
+          const malePartPct = b.total > 0 ? Math.round((b.male / b.total) * 100) : 0;
+          const femalePartPct = 100 - malePartPct;
+          const isPeak = peakBucket && b.hour === peakBucket.hour;
+
+          return `
+            <div class="flex-1 flex flex-col items-center min-w-[38px] max-w-[56px] text-center">
+              <span class="text-[11px] font-black tabular-nums mb-1.5 ${isPeak ? 'text-emerald-400 font-black' : 'text-zinc-300'}">${b.total}</span>
+              <div style="background-color: #18181b; border: 1px solid ${isPeak ? '#10b981' : '#27272a'}; height: 110px;" class="w-full rounded-xl overflow-hidden flex flex-col justify-end p-0.5 relative">
+                <div style="height: ${totalHeightPct}%" class="w-full flex flex-col justify-end rounded-lg overflow-hidden">
+                  ${b.female > 0 ? `<div style="height: ${femalePartPct}%; background-color: #f43f5e;" class="w-full" title="Bayan: ${b.female}"></div>` : ''}
+                  ${b.male > 0 ? `<div style="height: ${malePartPct}%; background-color: #6366f1;" class="w-full" title="Bay: ${b.male}"></div>` : ''}
+                </div>
+              </div>
+              <span class="text-[10px] font-bold tabular-nums mt-1.5 ${isPeak ? 'text-emerald-400' : 'text-zinc-400'}">${b.hour}:00</span>
+              ${isPeak ? `<span style="background-color: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);" class="text-[8px] font-black text-emerald-400 px-1 py-0.2 rounded mt-0.5 uppercase">Zirve</span>` : '<span class="text-[8px] opacity-0">-</span>'}
+            </div>
+          `;
+        }).join('');
+
+        chartHtml = `
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+              <div>
+                <h4 class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                  Saatlik Giriş & Yoğunluk Dağılımı
+                </h4>
+                <p class="text-[10px] text-zinc-400 mt-0.5">Gece boyunca saat saat kapı temposu ve bay / bayan girişleri</p>
+              </div>
+              <div class="flex items-center gap-3 text-[10px] font-bold">
+                <span class="flex items-center gap-1.5 text-indigo-400"><span class="w-2 h-2 rounded-sm bg-indigo-500"></span> Bay</span>
+                <span class="flex items-center gap-1.5 text-rose-400"><span class="w-2 h-2 rounded-sm bg-rose-500"></span> Bayan</span>
+                <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2 h-2 rounded-sm bg-emerald-500"></span> Zirve Saat</span>
+              </div>
+            </div>
+            <div class="flex items-end justify-between gap-1 pt-2 pb-1 overflow-x-hidden">
+              ${barsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. Saat Dilimi Tablosu
+      let tableRowsHtml = '';
+      if (buckets.length > 0) {
+        tableRowsHtml = buckets.map(b => {
+          const isPeak = peakBucket && b.hour === peakBucket.hour;
+          const sharePct = grandTotal > 0 ? ((b.total / grandTotal) * 100).toFixed(1) : '0';
+          return `
+            <tr style="border-bottom: 1px solid #27272a; ${isPeak ? 'background-color: rgba(16,185,129,0.08);' : ''}">
+              <td class="py-2 px-3 text-xs font-bold text-white flex items-center gap-1.5">
+                <span>${b.label} - ${String((parseInt(b.hour, 10) + 1) % 24).padStart(2, '0')}:00</span>
+                ${isPeak ? `<span style="background-color: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4);" class="text-[9px] font-black text-emerald-400 px-1.5 py-0.5 rounded uppercase">Zirve</span>` : ''}
+              </td>
+              <td class="py-2 px-3 text-xs font-bold text-indigo-400 tabular-nums text-center">${b.male}</td>
+              <td class="py-2 px-3 text-xs font-bold text-rose-400 tabular-nums text-center">${b.female}</td>
+              <td class="py-2 px-3 text-xs font-black text-white tabular-nums text-center">${b.total}</td>
+              <td class="py-2 px-3 text-xs font-bold text-zinc-400 tabular-nums text-right">%${sharePct}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 4. Referans ve Misafir Dökümü
+      const sortedStaff = Object.entries(staffMap).sort((a, b) => b[1].totalMale - a[1].totalMale);
+      let staffSectionHtml = '';
+
+      if (sortedStaff.length === 0) {
+        staffSectionHtml = `
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-5 text-center text-xs text-zinc-500">
+            Bu vardiyada henüz referanslı misafir girişi kaydedilmemiştir.
+          </div>
+        `;
+      } else {
+        const staffCardsHtml = sortedStaff.map(([staffName, data]) => {
+          const typeBadges = Object.entries(data.typeRecords)
+            .filter(([_, count]) => count > 0)
+            .map(([tKey, count]) => {
+              const tMeta = getEntryTypeMeta(tKey);
+              return `<span class="${tMeta.statColor || 'text-zinc-300'} font-bold">${count} ${escapeHtml(tMeta.unit || tMeta.short)}</span>`;
+            })
+            .join(' • ');
+
+          const lines = data.items.map(item => {
+            const tMeta = getEntryTypeMeta(item.entryType);
+            const dot = tMeta.dotClass || 'bg-cyan-400';
+            const guestName = (item.guestName || '').trim() || 'İsimsiz Misafir';
+            const count = Number(item.maleCount) || 1;
+            const notePart = item.note ? `<span class="text-zinc-400 font-normal">(${escapeHtml(item.note)})</span>` : '';
+
+            return `
+              <div style="background-color: #18181b; border: 1px solid #27272a;" class="text-[11px] text-zinc-200 rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 truncate">
+                  <span class="w-1.5 h-1.5 rounded-full ${dot} shrink-0"></span>
+                  <span class="font-bold text-white truncate">${escapeHtml(guestName)}</span>
+                  <span class="text-indigo-400 font-bold shrink-0">${count} Bay</span>
+                  ${notePart}
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="text-[10px] font-semibold text-zinc-400">${escapeHtml(item.entryType)}</span>
+                  <span class="text-[10px] font-bold text-zinc-400 tabular-nums">${item.time || '--:--'}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div style="background-color: #121215; border: 1px solid #27272a; break-inside: avoid; page-break-inside: avoid;" class="rounded-2xl p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+                <div>
+                  <div class="text-sm font-extrabold text-white flex items-center gap-2">
+                    <span>${escapeHtml(staffName)}</span>
+                  </div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">${typeBadges}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-black text-indigo-400 tabular-nums">${data.totalMale} Bay</div>
+                  <div class="text-[10px] text-zinc-500">${data.totalRecords} kayıt</div>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                ${lines}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        staffSectionHtml = `
+          <div class="space-y-2.5">
+            ${staffCardsHtml}
+          </div>
+        `;
+      }
+
+      // Rezervasyonlar Özeti (Varsa)
+      let resSectionHtml = '';
+      if (st.reservations && st.reservations.length > 0) {
+        const totalRes = st.reservations.length;
+        const checkedInRes = st.reservations.filter(r => r.status === 'checked_in').length;
+        const pendingRes = totalRes - checkedInRes;
+        const resRate = Math.round((checkedInRes / totalRes) * 100);
+
+        resSectionHtml = `
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div style="background-color: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);" class="w-8 h-8 rounded-xl flex items-center justify-center text-blue-400 shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-white">Rezervasyon Durumu</div>
+                <div class="text-[10px] text-zinc-400">Toplam ${totalRes} rez. • ${checkedInRes} giriş yapıldı (%${resRate}) • ${pendingRes} bekliyor</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <span style="background-color: #18181b; border: 1px solid #27272a;" class="text-[11px] font-bold text-blue-400 px-2.5 py-1 rounded-lg tabular-nums">
+                %${resRate} Tamamlanma
+              </span>
+            </div>
+          </div>
+        `;
+      }
+
+      // TÜM ŞABLONUN BİRLEŞTİRİLMESİ
+      container.innerHTML = `
+        <!-- ========================================== -->
+        <!-- A4 SAYFA BAŞLIĞI & KURUMSAL KİMLİK         -->
+        <!-- ========================================== -->
+        <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-5 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div style="background-color: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4);" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm shrink-0">
+              ${meta.emoji}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-lg font-black tracking-tight text-white uppercase">${escapeHtml(meta.title)}</h1>
+                <span style="background-color: rgba(16,185,129,0.18); border: 1px solid rgba(16,185,129,0.4);" class="text-[10px] font-black text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider">RESMİ RAPOR</span>
+              </div>
+              <p class="text-xs text-zinc-300 font-semibold mt-0.5">GECE SONU VARDİYA & FAALİYET RAPORU</p>
+              <p class="text-[10px] text-zinc-400 mt-1 flex items-center gap-2">
+                <span>📅 ${dateStrLong}</span>
+                <span>•</span>
+                <span>⏱️ Başlangıç: ${shiftStartStr}</span>
+                ${durationStr ? `<span>•</span><span>⏳ Süre: ${durationStr}</span>` : ''}
+              </p>
+            </div>
+          </div>
+
+          <div class="text-right shrink-0">
+            <div class="flex items-center justify-end gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span class="text-xs font-extrabold text-white tracking-wider">DOORFLOW</span>
+            </div>
+            <div class="text-[10px] font-bold text-zinc-400 mt-1">Yetkili Operasyon Dökümü</div>
+            <div class="text-[9px] font-mono text-zinc-500 mt-0.5">${reportCode}</div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ANA KPI METRİKLERİ (4 KART)                -->
+        <!-- ========================================== -->
+        <div class="grid grid-cols-4 gap-2.5">
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="p-3.5 rounded-2xl text-center">
+            <div class="text-[11px] font-bold text-zinc-400">Genel Toplam</div>
+            <div class="text-2xl font-black text-emerald-400 tabular-nums mt-0.5">${grandTotal}</div>
+            <div class="text-[10px] text-zinc-500 font-medium mt-0.5">Toplam Misafir</div>
+          </div>
+
+          <div style="background-color: #121215; border: 1px solid rgba(99,102,241,0.3);" class="p-3.5 rounded-2xl text-center">
+            <div class="text-[11px] font-bold text-indigo-400">Toplam Bay</div>
+            <div class="text-2xl font-black text-white tabular-nums mt-0.5">${totalMale}</div>
+            <div class="text-[10px] text-indigo-300 font-bold mt-0.5">%${malePct} Oran</div>
+          </div>
+
+          <div style="background-color: #121215; border: 1px solid rgba(244,63,94,0.3);" class="p-3.5 rounded-2xl text-center">
+            <div class="text-[11px] font-bold text-rose-400">Toplam Bayan</div>
+            <div class="text-2xl font-black text-white tabular-nums mt-0.5">${totalFemale}</div>
+            <div class="text-[10px] text-rose-300 font-bold mt-0.5">%${femalePct} Oran</div>
+          </div>
+
+          <div style="background-color: #121215; border: 1px solid rgba(16,185,129,0.3);" class="p-3.5 rounded-2xl text-center">
+            <div class="text-[11px] font-bold text-emerald-400">Zirve Yoğunluk</div>
+            <div class="text-lg font-black text-white tabular-nums mt-1">${peakText}</div>
+            <div class="text-[10px] text-emerald-300 font-bold mt-0.5">${peakCount}</div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- CİNSİYET ORANI DÖKÜM BARI                  -->
+        <!-- ========================================== -->
+        <div style="background-color: #121215; border: 1px solid #27272a;" class="p-3 rounded-2xl space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold">
+            <span class="text-indigo-400">Bay Dağılımı: %${malePct} (${totalMale} Kişi)</span>
+            <span class="text-rose-400">Bayan Dağılımı: %${femalePct} (${totalFemale} Kişi)</span>
+          </div>
+          <div class="h-3 w-full rounded-full overflow-hidden flex bg-zinc-900 border border-zinc-800">
+            <div style="width: ${grandTotal > 0 ? malePct : 50}%; background-color: #6366f1;" class="h-full"></div>
+            <div style="width: ${grandTotal > 0 ? femalePct : 50}%; background-color: #f43f5e;" class="h-full"></div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- GİRİŞ TÜRLERİ DAĞILIMI (ŞİŞE, VIP, VB.)    -->
+        <!-- ========================================== -->
+        <div class="space-y-1.5">
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">Giriş Türü & Servis Dağılımı</h3>
+          <div class="grid grid-cols-${Math.min(statsList.length, 4)} gap-2">
+            ${entryCardsHtml}
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SAATLİK YOĞUNLUK GRAFİĞİ                   -->
+        <!-- ========================================== -->
+        <div class="space-y-1.5">
+          ${chartHtml}
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SAAT DİLİMİ DÖKÜM TABLOSU                  -->
+        <!-- ========================================== -->
+        ${buckets.length > 0 ? `
+          <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-300">Saat Dilimi İstatistik Tablosu</h3>
+              <span class="text-[10px] text-zinc-500 font-bold">Gece Toplamı: ${grandTotal} Giriş</span>
+            </div>
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr style="border-bottom: 1px solid #27272a;" class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                  <th class="py-2 px-3">Saat Aralığı</th>
+                  <th class="py-2 px-3 text-center text-indigo-400">Bay</th>
+                  <th class="py-2 px-3 text-center text-rose-400">Bayan</th>
+                  <th class="py-2 px-3 text-center text-white">Toplam</th>
+                  <th class="py-2 px-3 text-right">Gece Payı</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRowsHtml}
+              </tbody>
+              <tfoot>
+                <tr style="border-top: 1px solid #3f3f46;" class="text-xs font-black text-white">
+                  <td class="py-2.5 px-3">TOPLAM GİRİŞ</td>
+                  <td class="py-2.5 px-3 text-center text-indigo-400 tabular-nums">${totalMale}</td>
+                  <td class="py-2.5 px-3 text-center text-rose-400 tabular-nums">${totalFemale}</td>
+                  <td class="py-2.5 px-3 text-emerald-400 tabular-nums text-center">${grandTotal}</td>
+                  <td class="py-2.5 px-3 text-right text-zinc-300 tabular-nums">%100</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        ` : ''}
+
+        <!-- ========================================== -->
+        <!-- REZERVASYON ÖZETİ (MEVCUTSA)               -->
+        <!-- ========================================== -->
+        ${resSectionHtml}
+
+        <!-- ========================================== -->
+        <!-- REFERANS & MİSAFİR DETAYLARI DÖKÜMÜ        -->
+        <!-- ========================================== -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">Referans & Personel Misafir Detayları</h3>
+            <span class="text-[10px] text-zinc-500 font-bold">${sortedStaff.length} Personel / Referans</span>
+          </div>
+          ${staffSectionHtml}
+        </div>
+
+        <!-- ========================================== -->
+        <!-- RAPOR ALT BİLGİSİ & GÜVENLİK DAMGASI       -->
+        <!-- ========================================== -->
+        <div style="background-color: #121215; border: 1px solid #27272a;" class="rounded-2xl p-4 flex items-center justify-between text-[10px] text-zinc-500">
+          <div>
+            <div class="font-bold text-zinc-400">Doorflow Dijital Kapı Operasyonu & Raporlama Motoru</div>
+            <div class="mt-0.5">Bu doküman yetkili işletme yöneticilerine özel sistem kayıtlarından üretilmiştir.</div>
+          </div>
+          <div class="text-right">
+            <div class="font-mono text-zinc-400">Rapor Tarihi: ${dateStrShort} ${timeStr}</div>
+            <div class="text-emerald-500 font-bold mt-0.5">● Sistem Doğrulaması Aktif</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateShiftPdfBlob() {
+      const isLoaded = await ensureHtml2PdfLoaded();
+      if (!isLoaded || typeof html2pdf === 'undefined') {
+        throw new Error('html2pdf_unavailable');
+      }
+
+      renderA4PdfReportDOM();
+      const element = document.getElementById('pdf-render-content');
+      if (!element) throw new Error('Render content element not found');
+
+      const fileName = getShiftPdfFileName();
+
+      // html2pdf render anında preview scaler'ı geçici olarak sıfırla ki retina çözünürlükte tam ölçekte yakalansın
+      const scaler = document.getElementById('pdf-preview-scaler');
+      const prevTransform = scaler ? scaler.style.transform : '';
+      const prevHeight = scaler ? scaler.style.height : '';
+      if (scaler) {
+        scaler.style.transform = 'none';
+        scaler.style.height = 'auto';
+      }
+
+      // Tek sayfa ve bölünmeyen dinamik boyut hesaplama:
+      // Genişlik standart 210mm, yükseklik ise tüm içeriğin aktığı dinamik mm
+      const elWidth = element.offsetWidth || 794;
+      const elHeight = element.scrollHeight || element.offsetHeight;
+      const pdfWidthMm = 210;
+      // Piksel oranını mm'ye çevir ve bölünmeyi / ikinci sayfayı kesin olarak engellemek için +6mm güvenlik marjı bırak
+      const pdfHeightMm = Math.max(140, Math.ceil((elHeight * pdfWidthMm) / elWidth) + 6);
+
+      const opt = {
+        margin: 0,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          backgroundColor: '#09090b',
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          width: elWidth,
+          height: elHeight
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: [pdfWidthMm, pdfHeightMm],
+          orientation: 'portrait',
+          compress: true
+        },
+        pagebreak: { mode: 'avoid-all' }
+      };
+
+      let blob = null;
+      try {
+        const worker = html2pdf().set(opt).from(element);
+        if (typeof worker.output === 'function') {
+          try {
+            blob = await worker.output('blob');
+          } catch (e) {
+            console.warn('worker.output blob failed, fallback to toPdf().get("pdf")', e);
+          }
+        }
+        if (!blob) {
+          blob = await worker.toPdf().get('pdf').then(pdf => pdf.output('blob'));
+        }
+      } finally {
+        if (scaler) {
+          scaler.style.transform = prevTransform;
+          scaler.style.height = prevHeight;
+        }
+      }
+
+      return { blob, fileName };
+    }
+
+    window.downloadShiftPdf = async function () {
+      if (isPdfGenerating) return;
+      isPdfGenerating = true;
+      showPdfLoading('PDF Hazırlanıyor...', 'Rapor tek sayfa formatında derlenip cihazınıza indiriliyor.');
+
+      try {
+        const { blob, fileName } = await generateShiftPdfBlob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 3000);
+        hidePdfLoading();
+        showToast('PDF raporu başarıyla indirildi!');
+      } catch (err) {
+        hidePdfLoading();
+        console.error('PDF indirme hatası:', err);
+        showToast('PDF motoru açılamadı, alternatif olarak yazdırma ekranı açılıyor...');
+        window.printShiftPdf();
+      } finally {
+        isPdfGenerating = false;
+      }
+    };
+
+    window.shareShiftPdf = async function () {
+      if (isPdfGenerating) return;
+      isPdfGenerating = true;
+      showPdfLoading('Paylaşım Hazırlanıyor...', 'PDF oluşturulup paylaşım menüsü açılıyor.');
+
+      try {
+        const { blob, fileName } = await generateShiftPdfBlob();
+        const meta = VENUE_META[activeVenue] || VENUE_META.frog;
+        const dateStr = new Date().toLocaleDateString('tr-TR');
+        const file = new File([blob], fileName, { type: 'application/pdf' });
+
+        hidePdfLoading();
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: `${meta.title} — Vardiya Raporu (${dateStr})`,
+            text: `${meta.title} ${dateStr} tarihli Gece Sonu Vardiya Raporu.`
+          });
+          showToast('Rapor başarıyla paylaşıldı!');
+        } else {
+          // Doğrudan dosya paylaşımı desteklenmiyorsa PDF'i indir ve kullanıcıyı bilgilendir
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }, 3000);
+          showToast('Cihazınız doğrudan dosya paylaşımını desteklemediği için PDF indirildi!');
+        }
+      } catch (err) {
+        hidePdfLoading();
+        if (err && err.name === 'AbortError') {
+          // Kullanıcı paylaşım menüsünü iptal etti
+          return;
+        }
+        console.error('PDF paylaşım hatası:', err);
+        showToast('Paylaşım başlatılamadı, yazdırma penceresi açılıyor...');
+        window.printShiftPdf();
+      } finally {
+        isPdfGenerating = false;
+      }
+    };
+
+    window.printShiftPdf = function () {
+      renderA4PdfReportDOM();
+      window.print();
+    };
+
+    window.addEventListener('resize', () => {
+      const modal = document.getElementById('pdf-export-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        window.fitPdfPreview();
+      }
+    });
 
     // =========================================================
     // YENİ GECE BAŞLATMA (SIFIRLAMA)
